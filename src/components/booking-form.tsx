@@ -79,7 +79,7 @@ export function BookingForm({ expert, onBookingConfirmed }: { expert: Expert; on
 
     toast({
       title: 'Session Booked! 🎉',
-      description: `Your ${data.duration} minute session with ${expert.name} on ${format(data.date, 'PPP')} has been confirmed.`,
+      description: `Your ${data.duration} minute session with ${expert.name} on ${format(data.date, 'PPP')} at ${data.time} has been confirmed.`,
     });
     form.reset();
     onBookingConfirmed();
@@ -180,9 +180,9 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
                     {availableDurations.map((item) => (
                         <FormItem key={item.duration}>
                         <FormControl>
-                            <RadioGroupItem value={String(item.duration)} className="sr-only" />
+                            <RadioGroupItem value={String(item.duration)} id={`duration-${item.duration}`} className="sr-only" />
                         </FormControl>
-                        <Label className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
+                        <Label htmlFor={`duration-${item.duration}`} className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
                             <span>{item.duration} min</span>
                             <span className="text-muted-foreground text-sm">${item.price}</span>
                         </Label>
@@ -205,9 +205,9 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
                         {availableTimes.map((time) => (
                             <FormItem key={time}>
                                 <FormControl>
-                                    <RadioGroupItem value={time} className="sr-only" />
+                                    <RadioGroupItem value={time} id={`time-${time}`} className="sr-only" />
                                 </FormControl>
-                                <Label className="flex items-center justify-center rounded-md border-2 border-muted bg-popover px-4 py-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
+                                <Label htmlFor={`time-${time}`} className="flex items-center justify-center rounded-md border-2 border-muted bg-popover px-4 py-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
                                     {time}
                                 </Label>
                             </FormItem>
@@ -284,9 +284,9 @@ function Step2({ form, expert }: { form: UseFormReturn<BookingFormValues>; exper
                             {['Beginner', 'Intermediate', 'Advanced'].map((level) => (
                                 <FormItem key={level}>
                                 <FormControl>
-                                    <RadioGroupItem value={level} className="sr-only" />
+                                    <RadioGroupItem value={level} id={`level-${level}`} className="sr-only" />
                                 </FormControl>
-                                <Label className="flex items-center justify-center rounded-md border-2 border-muted bg-popover px-4 py-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
+                                <Label htmlFor={`level-${level}`} className="flex items-center justify-center rounded-md border-2 border-muted bg-popover px-4 py-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
                                     {level}
                                 </Label>
                                 </FormItem>
@@ -418,3 +418,5 @@ function Step3({ form, expert, price }: { form: UseFormReturn<BookingFormValues>
         </div>
     )
 }
+
+    
