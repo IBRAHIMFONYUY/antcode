@@ -39,8 +39,7 @@ const navItems = [
 ];
 
 const bottomNavItems = [
-    { href: '/dashboard/profile', icon: UserCircle, title: 'Profile' },
-    { href: '#', icon: Settings, title: 'Settings' },
+    { href: '/dashboard/settings', icon: Settings, title: 'Settings' },
 ];
 
 export function DashboardSidebar() {
@@ -81,7 +80,7 @@ export function DashboardSidebar() {
             <SidebarMenuItem key={item.href}>
               <Link href={item.href}>
                 <SidebarMenuButton
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
                   className={cn("h-10 justify-start", isCollapsed && "w-10 justify-center")}
                 >
                   <item.icon className="h-5 w-5" />
@@ -94,6 +93,19 @@ export function DashboardSidebar() {
       </SidebarContent>
       <SidebarFooter className="border-t p-4">
          <SidebarMenu>
+            {bottomNavItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                    <Link href={item.href}>
+                        <SidebarMenuButton
+                            isActive={pathname.startsWith(item.href)}
+                            className={cn("h-10 justify-start", isCollapsed && "w-10 justify-center")}
+                        >
+                            <item.icon className="h-5 w-5" />
+                            {!isCollapsed && <span className="ml-3">{item.title}</span>}
+                        </SidebarMenuButton>
+                    </Link>
+                </SidebarMenuItem>
+            ))}
             <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={handleLogout}

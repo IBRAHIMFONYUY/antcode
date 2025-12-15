@@ -10,10 +10,20 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAuth, useFirestore, useUser } from '@/firebase';
 import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+const techCareers = [
+    "Frontend Developer",
+    "Backend Developer",
+    "Full Stack Developer",
+    "Data Scientist",
+    "UI/UX Designer",
+    "DevOps Engineer",
+    "Mobile Developer",
+];
 
 export default function SignupPage() {
   const searchParams = useSearchParams();
@@ -26,6 +36,7 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [techCareer, setTechCareer] = useState('');
   const [role, setRole] = useState(searchParams.get('role') === 'mentor' ? 'mentor' : 'student');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -33,6 +44,14 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth || !firestore) return;
+    if (!techCareer) {
+        toast({
+            variant: 'destructive',
+            title: 'Missing Information',
+            description: 'Please select your tech career.',
+        });
+        return;
+    }
 
     setLoading(true);
     try {
@@ -46,6 +65,7 @@ export default function SignupPage() {
         displayName: fullName,
         email: user.email,
         role: role,
+        techCareer: techCareer,
         createdAt: new Date(),
       });
       
@@ -70,16 +90,24 @@ export default function SignupPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      await setDoc(doc(firestore, 'users', user.uid), {
-        uid: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        role: role,
-        createdAt: new Date(),
-      }, { merge: true }); // Merge to avoid overwriting role if user already exists
+      // Check if the user already exists to decide on redirection
+      const userDocRef = doc(firestore, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
 
-      router.push('/dashboard');
+      if (userDoc.exists() && userDoc.data().techCareer) {
+         router.push('/dashboard');
+      } else {
+        // New user or existing user without a tech career, save basic info and redirect
+        await setDoc(userDocRef, {
+            uid: user.uid,
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            role: role, // Persist role from selection
+            createdAt: new Date(),
+        }, { merge: true });
+        router.push('/onboarding');
+      }
     } catch (error: any) {
       console.error("Google Sign-in error:", error);
        toast({
@@ -96,6 +124,7 @@ export default function SignupPage() {
     return <div className='flex items-center justify-center h-screen'><Loader2 className="h-8 w-8 animate-spin" /></div>;
   }
 
+  // Redirect logged-in users who land here
   if (user) {
     router.push('/dashboard');
     return null;
@@ -142,6 +171,23 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
+           <div className="grid gap-2">
+            <Label htmlFor="tech-career">Tech Career</Label>
+            <Select onValueChange={setTechCareer} value={techCareer}>
+                <SelectTrigger id="tech-career">
+                    <SelectValue placeholder="Select your career path" />
+                </SelectTrigger>
+                <SelectContent>
+                    {techCareers.map((career) => (
+                        <SelectItem key={career} value={career}>
+                            {career}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+          </div>
+
 
           <div className="grid gap-2">
             <Label>I am a...</Label>
