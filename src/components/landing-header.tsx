@@ -77,12 +77,14 @@ export function LandingHeader() {
       <div 
         ref={headerContainerRef}
         className={cn(
-            "container flex h-16 items-center rounded-full border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-500 ease-in-out",
-            isHovered ? "max-w-6xl justify-between" : "max-w-min justify-center"
+            "relative container flex h-16 items-center rounded-full border border-primary/20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-[max-width,padding] duration-700 ease-in-out",
+            isHovered ? "max-w-6xl justify-between px-6" : "max-w-min justify-center px-4"
         )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        <div className="absolute inset-0 rounded-full border-2 border-primary/50 shadow-[0_0_15px_2px_hsl(var(--primary)/0.4)] transition-opacity duration-700 ease-in-out" style={{ opacity: isHovered ? 1 : 0 }} />
+
         <div className={cn(
             "flex items-center transition-all duration-300",
             isHovered ? "w-auto" : "w-full justify-center"
@@ -90,7 +92,7 @@ export function LandingHeader() {
             <Logo />
             <nav className={cn(
                 "flex items-center space-x-6 text-sm font-medium transition-opacity duration-300 ease-in-out",
-                isHovered ? "ml-10 opacity-100 delay-200" : "w-0 opacity-0"
+                isHovered ? "ml-10 opacity-100 delay-300" : "w-0 opacity-0"
             )}>
             {navLinks.map((link) => (
                 <Link
@@ -108,7 +110,7 @@ export function LandingHeader() {
         </div>
         <div className={cn(
             "flex items-center space-x-4 transition-opacity duration-300 ease-in-out", 
-            isHovered ? "opacity-100 delay-200" : "w-0 opacity-0"
+            isHovered ? "opacity-100 delay-300" : "w-0 opacity-0"
         )}>
           <Button variant="ghost" asChild>
             <Link href="/auth/login">Login</Link>
