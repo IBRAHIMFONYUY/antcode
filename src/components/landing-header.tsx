@@ -6,6 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { Menu } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 
 const navLinks = [
   { href: '/experts', label: 'Explore Experts' },
@@ -19,6 +23,7 @@ export function LandingHeader() {
   const [isHovered, setIsHovered] = useState(false);
   const loadingBarRef = useRef<HTMLDivElement>(null);
   const headerContainerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // This is a workaround to show loading on internal navigation
@@ -71,6 +76,59 @@ export function LandingHeader() {
       window.removeEventListener('popstate', handlePopState);
     };
   }, [loading, pathname]);
+  
+  if (isMobile) {
+    return (
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center justify-between">
+          <Logo />
+           <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <div className="p-4">
+                <div className="mb-8">
+                  <Logo />
+                </div>
+                <nav className="flex flex-col space-y-4">
+                  {navLinks.map((link) => (
+                    <SheetClose asChild key={link.href}>
+                      <Link
+                        href={link.href}
+                        className={cn(
+                          'text-lg font-medium transition-colors hover:text-primary',
+                          pathname === link.href ? 'text-primary' : 'text-foreground'
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                </nav>
+                <div className="mt-8 flex flex-col space-y-4">
+                  <SheetClose asChild>
+                    <Button variant="outline" asChild>
+                        <Link href="/auth/login">Login</Link>
+                    </Button>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Button asChild>
+                        <Link href="/auth/signup">Get Started</Link>
+                    </Button>
+                  </SheetClose>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+        {loading && <div ref={loadingBarRef} className="absolute bottom-0 h-0.5 bg-primary" />}
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-4 z-50 w-full flex justify-center">
@@ -84,8 +142,8 @@ export function LandingHeader() {
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className={cn(
-            "absolute inset-0 rounded-full border-2 border-primary/30 shadow-[0_0_15px_2px_hsl(var(--primary)/0.2)] transition-all duration-300 ease-in-out",
-            isHovered ? "border-primary/50 shadow-[0_0_20px_3px_hsl(var(--primary)/0.4)]" : ""
+            "absolute inset-0 rounded-full border-2 border-transparent transition-all duration-300 ease-in-out",
+            isHovered ? "border-primary/50 shadow-[0_0_20px_3px_hsl(var(--primary)/0.4)]" : "shadow-[0_0_15px_2px_hsl(var(--primary)/0.2)]"
         )} />
 
         <div className={cn(
