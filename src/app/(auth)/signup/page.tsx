@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +15,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
 
-export default function SignupPage({ searchParams }: { searchParams: { role?: string } }) {
+export default function SignupPage() {
+  const searchParams = useSearchParams();
   const { user, loading: userLoading } = useUser();
   const auth = useAuth();
   const firestore = useFirestore();
@@ -25,7 +26,7 @@ export default function SignupPage({ searchParams }: { searchParams: { role?: st
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState(searchParams.role === 'mentor' ? 'mentor' : 'student');
+  const [role, setRole] = useState(searchParams.get('role') === 'mentor' ? 'mentor' : 'student');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
