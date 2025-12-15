@@ -1,3 +1,5 @@
+'use client';
+import { useUser } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -5,15 +7,29 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { courses, tasks } from '@/lib/data';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+
 
 export default function DashboardPage() {
+  const { user, loading } = useUser();
+  const router = useRouter();
   const recentTasks = tasks.slice(0, 3);
+
+  if (loading) {
+    return <div className='flex items-center justify-center h-full'><Loader2 className="h-8 w-8 animate-spin" /></div>;
+  }
+  
+  if (!user) {
+    router.push('/login');
+    return null;
+  }
   
   return (
     <div className="grid gap-8">
       <div>
         <h1 className="font-headline text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, Alex! Here&apos;s your progress.</p>
+        <p className="text-muted-foreground">Welcome back, {user.displayName ?? 'User'}! Here&apos;s your progress.</p>
       </div>
 
       <section>

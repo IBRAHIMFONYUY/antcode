@@ -15,7 +15,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const navLinks = [
   { href: '/experts', label: 'Explore Experts' },
   { href: '/courses', label: 'Courses' },
-  { href: '/auth/signup?role=mentor', label: 'Become a Mentor' },
+  { href: '/signup?role=mentor', label: 'Become a Mentor' },
 ];
 
 export function LandingHeader() {
@@ -114,12 +114,12 @@ export function LandingHeader() {
                 <div className="mt-8 flex flex-col space-y-4">
                   <SheetClose asChild>
                     <Button variant="outline" asChild>
-                        <Link href="/auth/login">Login</Link>
+                        <Link href="/login">Login</Link>
                     </Button>
                   </SheetClose>
                   <SheetClose asChild>
                     <Button asChild>
-                        <Link href="/auth/signup">Get Started</Link>
+                        <Link href="/signup">Get Started</Link>
                     </Button>
                   </SheetClose>
                 </div>
@@ -176,10 +176,10 @@ export function LandingHeader() {
             isHovered ? "opacity-100 delay-500" : "w-0 opacity-0 pointer-events-none"
         )}>
           <Button variant="ghost" asChild>
-            <Link href="/auth/login">Login</Link>
+            <Link href="/login">Login</Link>
           </Button>
           <Button asChild>
-            <Link href="/auth/signup">Get Started</Link>
+            <Link href="/signup">Get Started</Link>
           </Button>
         </div>
       </div>

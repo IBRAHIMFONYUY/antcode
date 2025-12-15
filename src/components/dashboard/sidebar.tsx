@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   SidebarContent,
@@ -23,6 +23,8 @@ import {
   Settings,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
+import { useAuth, useUser } from '@/firebase';
+import { signOut } from 'firebase/auth';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, title: 'Dashboard' },
@@ -35,6 +37,17 @@ const navItems = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    if (auth) {
+      await signOut(auth);
+      router.push('/login');
+    }
+  };
+
 
   return (
     <>
@@ -61,15 +74,15 @@ export function DashboardSidebar() {
       <SidebarFooter className="border-t">
         <div className="flex items-center gap-2 p-2">
             <Avatar className="h-9 w-9">
-              <AvatarImage src="https://picsum.photos/seed/user/100/100" />
-              <AvatarFallback>U</AvatarFallback>
+              <AvatarImage src={user?.photoURL ?? "https://picsum.photos/seed/user/100/100"} />
+              <AvatarFallback>{user?.displayName?.charAt(0) ?? 'U'}</AvatarFallback>
             </Avatar>
             <div className="flex-1 overflow-hidden">
-                <p className="truncate font-medium">Alex Smith</p>
-                <p className="truncate text-xs text-muted-foreground">alex.smith@example.com</p>
+                <p className="truncate font-medium">{user?.displayName ?? 'User'}</p>
+                <p className="truncate text-xs text-muted-foreground">{user?.email ?? ''}</p>
             </div>
-            <Button variant="ghost" size="icon" asChild>
-                <Link href="/"><LogOut /></Link>
+            <Button variant="ghost" size="icon" onClick={handleLogout}>
+                <LogOut />
             </Button>
         </div>
       </SidebarFooter>
