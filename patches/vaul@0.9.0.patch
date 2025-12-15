@@ -1,0 +1,71 @@
+diff --git a/node_modules/vaul/package.json b/node_modules/vaul/package.json
+index 0399139..4208a46 100644
+--- a/node_modules/vaul/package.json
++++ b/node_modules/vaul/package.json
+@@ -37,7 +37,7 @@
+     "access": "public"
+   },
+   "peerDependencies": {
+-    "react": "^16.8 || ^17.0 || ^18.0",
++    "react": "^16.8 || ^17.0 || ^18.0 || ^19.0",
+     "react-dom": "^16.8 || ^17.0 || ^18.0"
+   },
+   "dependencies": {
+diff --git a/node_modules/vaul/dist/index.mjs b/node_modules/vaul/dist/index.mjs
+index ad838a5..a37c1d3 100644
+--- a/node_modules/vaul/dist/index.mjs
++++ b/node_modules/vaul/dist/index.mjs
+@@ -73,7 +73,7 @@
+ "use client";
+ var o = __importStar(require("react"));
+ var r = __importStar(require("react-dom"));
+-var n = ({ children: e, onOpenChange: t, open: l, shouldScaleBackground: a = !1, direction: i = "bottom", onDrag: s, onRelease: c, modal: u = !0, nested: f, onClose: m, dismissible: p = !0, snapPoints: d, defaultSnapPoint: g, activeSnapPoint: v, setActiveSnapPoint: y }) => {
++var n = ({ children: e, onOpenChange: t, open: l, shouldScaleBackground: a = !1, direction: i = "bottom", onDrag: s, onRelease: c, modal: u = !0, nested: f, onClose: m, dismissible: p = !0, snapPoints: d, defaultSnapPoint: g, activeSnapPoint: v, setActiveSnapPoint: y, preventScrollRestoration: preventScrollRestoration }) => {
+   const [A, b] = o.useState(
+     l !== void 0 ? l : !1
+   ), T = l !== void 0 ? l : A, E = o.useRef(null), _ = o.useRef(
+@@ -176,7 +176,7 @@
+       }
+     }
+   }, [$, E, T]), o.useEffect(() => {
+-    if (T)
++    if (T && !preventScrollRestoration)
+       return document.addEventListener("scroll", W), () => {
+         document.removeEventListener("scroll", W);
+       };
+@@ -201,7 +201,7 @@
+       }
+     }
+   }, [L]), o.useEffect(() => {
+-    if (T) {
++    if (T && !preventScrollRestoration) {
+       const w = (O) => {
+         O.target && K(O.target) && (O.preventDefault(), O.stopPropagation());
+       };
+@@ -1071,7 +1071,7 @@
+ "use client";
+ var o = __importStar(require("react"));
+ var r = __importStar(require("react-dom"));
+-var n = ({ children: e, onOpenChange: t, open: l, shouldScaleBackground: a = !1, direction: i = "bottom", onDrag: s, onRelease: c, modal: u = !0, nested: f, onClose: m, dismissible: p = !0, snapPoints: d, defaultSnapPoint: g, activeSnapPoint: v, setActiveSnapPoint: y }) => {
++var n = ({ children: e, onOpenChange: t, open: l, shouldScaleBackground: a = !1, direction: i = "bottom", onDrag: s, onRelease: c, modal: u = !0, nested: f, onClose: m, dismissible: p = !0, snapPoints: d, defaultSnapPoint: g, activeSnapPoint: v, setActiveSnapPoint: y, preventScrollRestoration: preventScrollRestoration }) => {
+   const [A, b] = o.useState(
+     l !== void 0 ? l : !1
+   ), T = l !== void 0 ? l : A, E = o.useRef(null), _ = o.useRef(
+@@ -1170,7 +1170,7 @@
+       }
+     }
+   }, [$, E, T]), o.useEffect(() => {
+-    if (T)
++    if (T && !preventScrollRestoration)
+       return document.addEventListener("scroll", W), () => {
+         document.removeEventListener("scroll", W);
+       };
+@@ -1195,7 +1195,7 @@
+       }
+     }
+   }, [L]), o.useEffect(() => {
+-    if (T) {
++    if (T && !preventScrollRestoration) {
+       const w = (O) => {
+         O.target && K(O.target) && (O.preventDefault(), O.stopPropagation());
+       };
