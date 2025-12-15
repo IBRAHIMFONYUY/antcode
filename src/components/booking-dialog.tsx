@@ -26,7 +26,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
     return (
         <ResponsiveModal isOpen={isOpen} onOpenChange={onOpenChange} className="max-w-4xl p-0">
             <DialogTitle className="sr-only">Book a session with {expert.name}</DialogTitle>
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-full max-h-[90vh]">
                 <div className="p-6 border-b">
                     <div className="flex items-start justify-between">
                         <div className="flex items-center gap-4">
