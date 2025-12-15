@@ -145,6 +145,9 @@ export function BookingForm({ expert, onBookingConfirmed }: { expert: Expert; on
 
 function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
   const selectedDate = form.watch('date');
+  const selectedTime = form.watch('time');
+  const selectedDuration = form.watch('duration');
+
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
        <div>
@@ -176,13 +179,13 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
                 <FormItem className="space-y-3">
                 <FormLabel className="font-semibold">Select duration</FormLabel>
                 <FormControl>
-                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="grid grid-cols-2 gap-4">
+                    <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-2 gap-4">
                     {availableDurations.map((item) => (
                         <FormItem key={item.duration}>
                         <FormControl>
                             <RadioGroupItem value={String(item.duration)} id={`duration-${item.duration}`} className="sr-only" />
                         </FormControl>
-                        <Label htmlFor={`duration-${item.duration}`} className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
+                        <Label htmlFor={`duration-${item.duration}`} className={cn("flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer", selectedDuration === String(item.duration) && "border-primary")}>
                             <span>{item.duration} min</span>
                             <span className="text-muted-foreground text-sm">${item.price}</span>
                         </Label>
@@ -201,13 +204,13 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
                 <FormItem className="space-y-3">
                 <FormLabel className="font-semibold">Select time</FormLabel>
                 <FormControl>
-                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="grid grid-cols-3 gap-2">
+                    <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-3 gap-2">
                         {availableTimes.map((time) => (
                             <FormItem key={time}>
                                 <FormControl>
                                     <RadioGroupItem value={time} id={`time-${time}`} className="sr-only" />
                                 </FormControl>
-                                <Label htmlFor={`time-${time}`} className="flex items-center justify-center rounded-md border-2 border-muted bg-popover px-4 py-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
+                                <Label htmlFor={`time-${time}`} className={cn("flex items-center justify-center rounded-md border-2 border-muted bg-popover px-4 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer", selectedTime === time && "border-primary")}>
                                     {time}
                                 </Label>
                             </FormItem>
@@ -418,5 +421,7 @@ function Step3({ form, expert, price }: { form: UseFormReturn<BookingFormValues>
         </div>
     )
 }
+
+    
 
     
