@@ -498,5 +498,3 @@ function SuccessStep({ onOpenChange }: { onOpenChange: (open: boolean) => void }
         </div>
     )
 }
-
-    
