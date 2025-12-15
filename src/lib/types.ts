@@ -47,3 +47,9 @@ export type NavItem = {
     icon: LucideIcon;
     label?: string;
 };
+
+export type FaqItem = {
+    id: string;
+    question: string;
+    answer: string;
+}
