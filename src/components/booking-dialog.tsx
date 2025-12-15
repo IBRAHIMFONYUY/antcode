@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { BookingForm } from './booking-form';
 import type { Expert } from '@/lib/types';
@@ -24,6 +24,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-4xl p-0">
+                <DialogTitle className="sr-only">Book a session with {expert.name}</DialogTitle>
                 <div className="flex flex-col">
                     <div className="p-6 border-b">
                         <div className="flex items-start justify-between">
