@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "expert-1",
+      "description": "Portrait of a smiling woman.",
+      "imageUrl": "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzY1NzAzNDU5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "expert-2",
+      "description": "Portrait of a man in a professional setting.",
+      "imageUrl": "https://images.unsplash.com/photo-1533547252597-ef7bf6c4479f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bWFuJTIwcHJvZmVzc2lvbmFsfGVufDB8fHx8MTc2NTcxNzQ3NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man professional"
+    },
+    {
+      "id": "expert-3",
+      "description": "Portrait of a person coding.",
+      "imageUrl": "https://images.unsplash.com/photo-1629904869392-ae2a682d4d01?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwZXJzb24lMjBjb2Rpbmd8ZW58MHx8fHwxNzY1NzgzODI3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person coding"
+    },
+    {
+      "id": "expert-4",
+      "description": "Portrait of a woman with glasses.",
+      "imageUrl": "https://images.unsplash.com/photo-1554250660-d8ba2d397fed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx3b21hbiUyMGdsYXNzZXN8ZW58MHx8fHwxNzY1NzMwOTY1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman glasses"
+    },
+    {
+      "id": "expert-5",
+      "description": "Portrait of a man in a casual setting.",
+      "imageUrl": "https://images.unsplash.com/photo-1631297969450-ec433357157f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtYW4lMjBjYXN1YWx8ZW58MHx8fHwxNzY1Nzc0NjIxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man casual"
+    },
+    {
+      "id": "expert-6",
+      "description": "Portrait of a smiling person.",
+      "imageUrl": "https://images.unsplash.com/photo-1623605931891-d5b95ee98459?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwZXJzb24lMjBzbWlsaW5nfGVufDB8fHx8MTc2NTc3MzExNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person smiling"
+    },
+    {
+      "id": "expert-7",
+      "description": "A developer working on a laptop",
+      "imageUrl": "https://images.unsplash.com/photo-1581913229425-9c6b993fc107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkZXZlbG9wZXIlMjBsYXB0b3B8ZW58MHx8fHwxNzY1ODAyMzUxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "developer laptop"
+    },
+    {
+      "id": "expert-8",
+      "description": "A designer sketching ideas",
+      "imageUrl": "https://images.unsplash.com/photo-1635183783375-98e857771351?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkZXNpZ25lciUyMHNrZXRjaGluZ3xlbnwwfHx8fDE3NjU3MjY2OTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "designer sketching"
+    }
+  ]
 }
