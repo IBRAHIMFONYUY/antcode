@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Expert } from '@/lib/types';
 import { Progress } from './ui/progress';
+import { Label } from '@/components/ui/label';
 
 const bookingSchema = z.object({
   date: z.date({
