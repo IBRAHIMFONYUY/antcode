@@ -14,8 +14,11 @@ export default function LandingPage() {
   return (
     <div className="flex-1">
       {/* Hero Section */}
-      <section className="py-20 md:py-32">
-        <div className="container text-center">
+      <section className="relative overflow-hidden py-20 md:py-32">
+        <div className="container relative z-10 text-center">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] md:w-[150%] md:h-[150%] lg:w-[100%] lg:h-[100%] bg-grid-pattern opacity-20 animate-spin-slow"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-primary/20 rounded-full blur-3xl"></div>
+          
           <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             Learn, Build, and Grow with Industry Experts
           </h1>

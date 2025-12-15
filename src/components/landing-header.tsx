@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
@@ -14,6 +15,38 @@ const navLinks = [
 
 export function LandingHeader() {
   const pathname = usePathname();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const handleStart = (url: string) => (url !== window.location.pathname) && setLoading(true);
+    const handleComplete = () => setLoading(false);
+
+    // For next/link navigation
+    // This is a simplified version. For a robust solution, you might need to tap into Next.js router events if they are exposed in a way that can be used in your app version.
+    // The following is a conceptual stand-in.
+    document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            if(href && href.startsWith('/') && href !== window.location.pathname){
+                handleStart(href);
+            }
+        });
+    });
+    
+    // Fallback for when navigation completes
+    const originalPushState = history.pushState;
+    history.pushState = function(...args) {
+        originalPushState.apply(this, args);
+        handleComplete();
+    };
+
+    window.addEventListener('popstate', handleComplete);
+    
+    return () => {
+        window.removeEventListener('popstate', handleComplete);
+        history.pushState = originalPushState;
+    };
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -42,6 +75,7 @@ export function LandingHeader() {
           </Button>
         </div>
       </div>
+      {loading && <div className="absolute bottom-0 h-0.5 w-full bg-primary animate-pulse" />}
     </header>
   );
 }
