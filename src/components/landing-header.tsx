@@ -37,7 +37,7 @@ export function LandingHeader() {
           <Button variant="ghost" asChild>
             <Link href="/auth/login">Login</Link>
           </Button>
-          <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+          <Button asChild>
             <Link href="/auth/signup">Get Started</Link>
           </Button>
         </div>

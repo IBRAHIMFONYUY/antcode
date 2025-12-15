@@ -23,7 +23,7 @@ export default function LandingPage() {
             Combine 1-on-1 mentorship with structured learning paths to accelerate your career in tech. Get guidance from the best in the industry.
           </p>
           <div className="mt-10 flex justify-center gap-4">
-            <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button size="lg" asChild>
               <Link href="/auth/signup">Get Started</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
@@ -36,21 +36,21 @@ export default function LandingPage() {
       </section>
 
       {/* Value Stats Section */}
-      <section className="bg-card py-16">
+      <section className="bg-muted py-16">
         <div className="container">
           <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
             <div className="flex flex-col items-center gap-2">
-              <Users className="h-10 w-10 text-primary" />
+              <Users className="h-10 w-10 text-accent" />
               <p className="text-3xl font-bold">100+ Mentors</p>
               <p className="text-muted-foreground">From top-tier companies</p>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <Book className="h-10 w-10 text-primary" />
+              <Book className="h-10 w-10 text-accent" />
               <p className="text-3xl font-bold">Guided Learning Paths</p>
               <p className="text-muted-foreground">Curated by industry veterans</p>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <Briefcase className="h-10 w-10 text-primary" />
+              <Briefcase className="h-10 w-10 text-accent" />
               <p className="text-3xl font-bold">Real-World Projects</p>
               <p className="text-muted-foreground">Build a portfolio that stands out</p>
             </div>
@@ -73,11 +73,13 @@ export default function LandingPage() {
             {featuredExperts.map((expert) => (
                 <Card key={expert.id} className="overflow-hidden transition-shadow hover:shadow-lg">
                     <CardContent className="p-6 text-center">
-                        <Avatar className="mx-auto h-24 w-24 border-4 border-background ring-2 ring-primary">
-                            <AvatarImage src={expert.imageUrl} alt={expert.name} data-ai-hint="person smiling" />
-                            <AvatarFallback>{expert.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <h3 className="mt-4 text-xl font-semibold">{expert.name}</h3>
+                        <Link href={`/experts/${expert.id}`}>
+                            <Avatar className="mx-auto h-24 w-24 border-4 border-background ring-2 ring-primary">
+                                <AvatarImage src={expert.imageUrl} alt={expert.name} data-ai-hint="person smiling" />
+                                <AvatarFallback>{expert.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                        </Link>
+                        <h3 className="mt-4 text-xl font-semibold"><Link href={`/experts/${expert.id}`}>{expert.name}</Link></h3>
                         <p className="mt-1 text-muted-foreground">{expert.role} at <span className="font-medium text-primary">{expert.company}</span></p>
                         <div className="mt-4 flex flex-wrap justify-center gap-2">
                             {expert.expertise.slice(0, 3).map((skill) => (

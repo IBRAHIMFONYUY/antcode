@@ -6,6 +6,7 @@ export type Expert = {
   role: string;
   company: string;
   expertise: string[];
+  about: string;
   imageUrl: string;
   rating: number;
   reviews: number;
