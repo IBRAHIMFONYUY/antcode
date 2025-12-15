@@ -4,8 +4,6 @@ import { useMemo, useState } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
-  DialogTrigger,
   DialogClose,
   DialogOverlay,
   DialogPortal,
@@ -103,7 +101,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
             {/* HEADER */}
             <header className="sticky top-0 z-10 border-b bg-background px-6 py-4">
               <div className="flex items-start justify-between">
-                <DialogTitle className='sr-only'>Book a session with {expert.name}</DialogTitle>
+                <div className='sr-only'>Book a session with {expert.name}</div>
                  <div className="flex items-center gap-4">
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={expert.imageUrl} alt={expert.name} />
@@ -156,19 +154,20 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
                       className="grid grid-cols-2 md:grid-cols-4 gap-2"
                     >
                       {DURATIONS.map((d) => (
-                        <RadioGroupItem
-                          key={d.duration}
-                          value={String(d.duration)}
-                          id={`duration-${d.duration}`}
-                          className="sr-only peer"
-                        />
-                         <Label 
+                        <div key={d.duration}>
+                          <RadioGroupItem
+                            value={String(d.duration)}
+                            id={`duration-${d.duration}`}
+                            className="sr-only peer"
+                          />
+                          <Label
                             htmlFor={`duration-${d.duration}`}
                             className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-                        >
-                          <span className="font-bold">{d.duration} min</span>
-                          <span className="text-xs text-muted-foreground">${d.price}</span>
-                        </Label>
+                          >
+                            <span className="font-bold">{d.duration} min</span>
+                            <span className="text-xs text-muted-foreground">${d.price}</span>
+                          </Label>
+                        </div>
                       ))}
                     </RadioGroup>
                   </div>
