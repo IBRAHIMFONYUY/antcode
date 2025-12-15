@@ -4,8 +4,8 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'MentorVerse',
-  description: 'Learn, Build, and Grow with Industry Experts',
+  title: 'AntCodeHub',
+  description: 'Your hub for coding excellence.',
 };
 
 export default function RootLayout({

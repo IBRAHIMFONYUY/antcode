@@ -10,7 +10,7 @@ export function Footer() {
           <div className="flex flex-col gap-4">
             <Logo />
             <p className="max-w-xs text-muted-foreground">
-              Learn, Build, and Grow with Industry Experts.
+              Your hub for coding excellence.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
@@ -48,7 +48,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 flex items-center justify-between border-t pt-8">
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} MentorVerse. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} AntCodeHub. All rights reserved.</p>
           <div className="flex items-center space-x-4">
             <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
             <Link href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></Link>
