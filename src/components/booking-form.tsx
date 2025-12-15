@@ -151,7 +151,6 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
        <div>
-         <p className="text-sm text-muted-foreground mb-4">Showing available time slots in <span className="font-semibold text-foreground">Africa/Lagos</span></p>
          <FormField
             control={form.control}
             name="date"
@@ -163,7 +162,7 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                        className="p-0"
+                        className="rounded-md border"
                     />
                 </FormControl>
                 <FormMessage />
@@ -185,7 +184,11 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
                         <FormControl>
                             <RadioGroupItem value={String(item.duration)} id={`duration-${item.duration}`} className="sr-only" />
                         </FormControl>
-                        <Label htmlFor={`duration-${item.duration}`} className={cn("flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer", selectedDuration === String(item.duration) && "border-primary")}>
+                        <Label htmlFor={`duration-${item.duration}`} className={cn(
+                            "flex flex-col items-center justify-between rounded-md border-2 p-4 cursor-pointer transition-colors",
+                            "border-muted bg-popover hover:bg-accent hover:text-accent-foreground",
+                            field.value === String(item.duration) && "border-primary bg-primary/5"
+                        )}>
                             <span>{item.duration} min</span>
                             <span className="text-muted-foreground text-sm">${item.price}</span>
                         </Label>
@@ -202,7 +205,7 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
             name="time"
             render={({ field }) => (
                 <FormItem className="space-y-3">
-                <FormLabel className="font-semibold">Select time</FormLabel>
+                <FormLabel className="font-semibold">Select time on {format(selectedDate, 'PPP')}</FormLabel>
                 <FormControl>
                     <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-3 gap-2">
                         {availableTimes.map((time) => (
@@ -210,7 +213,11 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
                                 <FormControl>
                                     <RadioGroupItem value={time} id={`time-${time}`} className="sr-only" />
                                 </FormControl>
-                                <Label htmlFor={`time-${time}`} className={cn("flex items-center justify-center rounded-md border-2 border-muted bg-popover px-4 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer", selectedTime === time && "border-primary")}>
+                                <Label htmlFor={`time-${time}`} className={cn(
+                                    "flex items-center justify-center rounded-md border-2 px-4 py-2 cursor-pointer transition-colors",
+                                    "border-muted bg-popover hover:bg-accent hover:text-accent-foreground",
+                                    field.value === time && "border-primary bg-primary/5 text-primary-foreground"
+                                )}>
                                     {time}
                                 </Label>
                             </FormItem>
@@ -421,7 +428,5 @@ function Step3({ form, expert, price }: { form: UseFormReturn<BookingFormValues>
         </div>
     )
 }
-
-    
 
     
