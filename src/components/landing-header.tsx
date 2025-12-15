@@ -18,10 +18,10 @@ export function LandingHeader() {
   const [loading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const loadingBarRef = useRef<HTMLDivElement>(null);
+  const headerContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // This is a workaround to show loading on internal navigation
-    // A more robust solution would involve Next.js's router events if available and suitable
     const handleAnchorClick = (event: MouseEvent) => {
       const target = event.currentTarget as HTMLAnchorElement;
       const href = target.getAttribute('href');
@@ -37,7 +37,6 @@ export function LandingHeader() {
     const handlePopState = () => setLoading(false);
     window.addEventListener('popstate', handlePopState);
     
-    // A simple way to end loading state after a delay, simulating page load
     let timer: NodeJS.Timeout;
     if (loading) {
       if(loadingBarRef.current) {
@@ -74,24 +73,31 @@ export function LandingHeader() {
   }, [loading, pathname]);
 
   return (
-    <header 
-      className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className={cn("container flex h-16 items-center transition-all duration-300", isHovered ? "justify-between" : "justify-center")}>
-        <div className={cn("flex items-center", isHovered ? "" : "absolute")}>
+    <header className="sticky top-4 z-50 w-full flex justify-center">
+      <div 
+        ref={headerContainerRef}
+        className={cn(
+            "container flex h-16 items-center rounded-full border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-500 ease-in-out",
+            isHovered ? "max-w-6xl justify-between" : "max-w-min justify-center"
+        )}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className={cn(
+            "flex items-center transition-all duration-300",
+            isHovered ? "w-full" : "w-auto"
+        )}>
             <Logo />
             <nav className={cn(
-                "items-center space-x-6 text-sm font-medium transition-all duration-300 md:flex",
-                isHovered ? "ml-10 opacity-100" : "ml-0 w-0 opacity-0"
+                "flex items-center space-x-6 text-sm font-medium transition-opacity duration-300 ease-in-out",
+                isHovered ? "ml-10 opacity-100 delay-200" : "w-0 opacity-0"
             )}>
             {navLinks.map((link) => (
                 <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                    'transition-colors hover:text-primary',
+                    'transition-colors hover:text-primary whitespace-nowrap',
                     pathname === link.href ? 'text-primary' : 'text-foreground/60'
                 )}
                 >
@@ -100,7 +106,10 @@ export function LandingHeader() {
             ))}
             </nav>
         </div>
-        <div className={cn("flex items-center space-x-4 transition-opacity duration-300", isHovered ? "opacity-100" : "opacity-0")}>
+        <div className={cn(
+            "flex items-center space-x-4 transition-opacity duration-300 ease-in-out", 
+            isHovered ? "opacity-100 delay-200" : "opacity-0"
+        )}>
           <Button variant="ghost" asChild>
             <Link href="/auth/login">Login</Link>
           </Button>
