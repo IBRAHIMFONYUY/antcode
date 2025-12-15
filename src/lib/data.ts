@@ -1,5 +1,6 @@
-import type { Expert, Course, Task, Session, FaqItem } from './types';
+import type { Expert, Course, Task, Session, FaqItem, Mentor, UpcomingCourse } from './types';
 import { PlaceHolderImages } from './placeholder-images';
+import { BookText, Mic, Video } from 'lucide-react';
 
 function getImageUrl(id: string) {
     return PlaceHolderImages.find(img => img.id === id)?.imageUrl ?? "https://picsum.photos/seed/placeholder/200/200";
@@ -200,4 +201,30 @@ export const faqs: FaqItem[] = [
     question: 'Do you offer team or corporate plans?',
     answer: 'Yes, we offer plans for teams and businesses looking to upskill their employees. Please contact our sales team for more information on corporate packages.'
   }
+];
+
+
+export const dashboardMentors: Mentor[] = [
+    { id: 'm1', name: 'Arian Adil', role: 'UI/UX Expert', imageUrl: getImageUrl('mentor-1') },
+    { id: 'm2', name: 'Bil Rihab', role: 'Motion Expert', imageUrl: getImageUrl('mentor-2') },
+    { id: 'm3', name: 'Abd Fahad', role: 'Web Development', imageUrl: getImageUrl('mentor-3') },
+];
+
+export const upcomingCoursesData: UpcomingCourse[] = [
+    { 
+        id: 'uc1', 
+        title: 'Design Factors', 
+        date: '10 Sep 2025', 
+        time: '9:00-11:00 AM', 
+        attendees: [getImageUrl('user-1'), getImageUrl('user-2'), getImageUrl('user-3')],
+        icon: BookText,
+    },
+    { 
+        id: 'uc2', 
+        title: 'Voice Artist', 
+        date: '15 Oct 2025', 
+        time: '03:00-04:00 PM', 
+        attendees: [getImageUrl('user-4'), getImageUrl('user-5')],
+        icon: Mic,
+    },
 ];

@@ -1,20 +1,22 @@
 'use client';
 import { useUser } from '@/firebase';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { courses, tasks } from '@/lib/data';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Progress } from '@/components/ui/progress';
+import { YourMentors } from '@/components/dashboard/your-mentors';
+import { TimeSpending } from '@/components/dashboard/time-spending';
+import { AttendanceChart } from '@/components/dashboard/attendance-chart';
+import { YourProgress } from '@/components/dashboard/your-progress';
+import { UpcomingCourses } from '@/components/dashboard/upcoming-courses';
+import { ClassSchedule } from '@/components/dashboard/class-schedule';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Video, Award } from 'lucide-react';
 
 
 export default function DashboardPage() {
   const { user, loading } = useUser();
   const router = useRouter();
-  const recentTasks = tasks.slice(0, 3);
 
   if (loading) {
     return <div className='flex items-center justify-center h-full'><Loader2 className="h-8 w-8 animate-spin" /></div>;
@@ -26,75 +28,63 @@ export default function DashboardPage() {
   }
   
   return (
-    <div className="grid gap-8">
+    <div className="space-y-6">
       <div>
-        <h1 className="font-headline text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {user.displayName ?? 'User'}! Here&apos;s your progress.</p>
+        <h1 className="font-headline text-3xl font-bold">Hi, {user.displayName ?? 'User'}!</h1>
+        <p className="text-muted-foreground">Welcome Back to your dashboard</p>
       </div>
 
-      <section>
-        <h2 className="font-headline text-2xl font-semibold mb-4">My Learning Paths</h2>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {courses.map((course) => (
-            <Card key={course.id} className="flex flex-col transition-transform transform hover:-translate-y-1">
-              <CardHeader>
-                <CardTitle>{course.title}</CardTitle>
-                <CardDescription>{course.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                  <span>Progress</span>
-                  <span>{course.progress}%</span>
-                </div>
-                <Progress value={course.progress} aria-label={`${course.title} progress`} />
-                 <p className="mt-2 text-sm text-muted-foreground">{course.tasksCompleted} / {course.totalTasks} tasks completed</p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href="/dashboard/courses">Continue Learning</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </section>
-      
-      <section>
-        <h2 className="font-headline text-2xl font-semibold mb-4">Task Status</h2>
-        <Card>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Task</TableHead>
-                        <TableHead>Course</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Due Date</TableHead>
-                        <TableHead></TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {recentTasks.map((task) => (
-                        <TableRow key={task.id}>
-                            <TableCell className="font-medium">{task.title}</TableCell>
-                            <TableCell>{task.course}</TableCell>
-                            <TableCell>
-                                <Badge variant={
-                                    task.status === 'Reviewed' ? 'default' :
-                                    task.status === 'Submitted' ? 'secondary' : 'outline'
-                                }>{task.status}</Badge>
-                            </TableCell>
-                            <TableCell>{task.dueDate}</TableCell>
-                            <TableCell className="text-right">
-                                <Button variant="ghost" size="sm" asChild>
-                                    <Link href="/dashboard/tasks">View</Link>
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Card className="bg-card/80">
+          <CardHeader className="flex-row items-center gap-4">
+            <div className="p-3 rounded-lg bg-primary/10">
+              <Video className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <CardDescription>Design</CardDescription>
+              <CardTitle>Video Editing</CardTitle>
+            </div>
+            <div className="ml-auto flex items-center gap-2">
+                <Progress value={60} className="w-20 h-2" />
+                <span className="font-semibold text-sm">60%</span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">12/22 Lessons Watched</p>
+          </CardContent>
         </Card>
-      </section>
+        <Card className="bg-card/80">
+          <CardHeader className="flex-row items-center gap-4">
+            <div className="p-3 rounded-lg bg-accent/10">
+              <Award className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <CardDescription>Design</CardDescription>
+              <CardTitle>3D Motion</CardTitle>
+            </div>
+            <div className="ml-auto flex items-center gap-2">
+                <Progress value={70} className="w-20 h-2" />
+                <span className="font-semibold text-sm">70%</span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">15/22 Lessons Watched</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <TimeSpending />
+        <YourProgress />
+        <YourMentors />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <AttendanceChart />
+        <UpcomingCourses />
+        <ClassSchedule />
+      </div>
+
     </div>
   );
 }

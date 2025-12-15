@@ -8,9 +8,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarHeader,
-  SidebarFooter
+  SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   LayoutDashboard,
@@ -23,7 +22,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
-import { useAuth, useUser } from '@/firebase';
+import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 
 const navItems = [
@@ -31,13 +30,16 @@ const navItems = [
   { href: '/dashboard/courses', icon: BookOpen, title: 'My Courses' },
   { href: '/dashboard/tasks', icon: ListTodo, title: 'Tasks' },
   { href: '/dashboard/reports', icon: BarChart2, title: 'Reports' },
-  { href: '/dashboard/sessions', icon: Calendar, title: 'Mentorship Sessions' },
-  { href: '/dashboard/profile', icon: UserCircle, title: 'Profile' },
+  { href: '/dashboard/sessions', icon: Calendar, title: 'Mentorship' },
+];
+
+const bottomNavItems = [
+    { href: '/dashboard/profile', icon: UserCircle, title: 'Profile' },
+    { href: '#', icon: Settings, title: 'Settings' },
 ];
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { user } = useUser();
   const auth = useAuth();
   const router = useRouter();
 
@@ -51,7 +53,7 @@ export function DashboardSidebar() {
 
   return (
     <>
-      <SidebarHeader>
+      <SidebarHeader className="border-b-0">
         <Logo isDashboard />
       </SidebarHeader>
       <SidebarContent className="p-2">
@@ -62,29 +64,40 @@ export function DashboardSidebar() {
                 <SidebarMenuButton
                   isActive={pathname === item.href}
                   tooltip={item.title}
+                  className="justify-center"
                 >
-                  <item.icon />
-                  <span>{item.title}</span>
+                  <item.icon className="h-5 w-5" />
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="border-t">
-        <div className="flex items-center gap-2 p-2">
-            <Avatar className="h-9 w-9">
-              <AvatarImage src={user?.photoURL ?? "https://picsum.photos/seed/user/100/100"} />
-              <AvatarFallback>{user?.displayName?.charAt(0) ?? 'U'}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 overflow-hidden">
-                <p className="truncate font-medium">{user?.displayName ?? 'User'}</p>
-                <p className="truncate text-xs text-muted-foreground">{user?.email ?? ''}</p>
-            </div>
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
-                <LogOut />
-            </Button>
-        </div>
+      <SidebarFooter className="border-t-0 p-2">
+         <SidebarMenu>
+          {bottomNavItems.map((item) => (
+             <SidebarMenuItem key={item.href}>
+              <Link href={item.href}>
+                <SidebarMenuButton
+                  isActive={pathname === item.href}
+                  tooltip={item.title}
+                   className="justify-center"
+                >
+                  <item.icon className="h-5 w-5" />
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+          ))}
+           <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={handleLogout}
+                  tooltip="Logout"
+                  className="justify-center"
+                >
+                  <LogOut className="h-5 w-5" />
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </>
   );

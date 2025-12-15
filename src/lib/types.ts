@@ -53,3 +53,19 @@ export type FaqItem = {
     question: string;
     answer: string;
 }
+
+export type Mentor = {
+    id: string;
+    name: string;
+    role: string;
+    imageUrl: string;
+};
+
+export type UpcomingCourse = {
+    id: string;
+    title: string;
+    date: string;
+    time: string;
+    attendees: string[];
+    icon: LucideIcon;
+};
