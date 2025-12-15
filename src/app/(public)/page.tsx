@@ -1,12 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Book, Briefcase, Users } from 'lucide-react';
 import { experts } from '@/lib/data';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { ExpertCard } from '@/components/expert-card';
 
 export default function LandingPage() {
   const featuredExperts = experts.slice(0, 6);
@@ -72,25 +69,9 @@ export default function LandingPage() {
               Hand-picked professionals ready to guide you.
             </p>
           </div>
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {featuredExperts.map((expert) => (
-                <Card key={expert.id} className="overflow-hidden transition-shadow hover:shadow-lg">
-                    <CardContent className="p-6 text-center">
-                        <Link href={`/experts/${expert.id}`}>
-                            <Avatar className="mx-auto h-24 w-24 border-4 border-background ring-2 ring-primary">
-                                <AvatarImage src={expert.imageUrl} alt={expert.name} data-ai-hint="person smiling" />
-                                <AvatarFallback>{expert.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        </Link>
-                        <h3 className="mt-4 text-xl font-semibold"><Link href={`/experts/${expert.id}`}>{expert.name}</Link></h3>
-                        <p className="mt-1 text-muted-foreground">{expert.role} at <span className="font-medium text-primary">{expert.company}</span></p>
-                        <div className="mt-4 flex flex-wrap justify-center gap-2">
-                            {expert.expertise.slice(0, 3).map((skill) => (
-                                <Badge key={skill} variant="secondary">{skill}</Badge>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
+                <ExpertCard key={expert.id} expert={expert} />
             ))}
           </div>
           <div className="mt-12 text-center">
