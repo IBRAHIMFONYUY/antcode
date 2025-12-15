@@ -9,6 +9,8 @@ import {
   SidebarMenuButton,
   SidebarHeader,
   SidebarFooter,
+  Sidebar,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,10 +22,13 @@ import {
   UserCircle,
   LogOut,
   Settings,
+  ChevronLeft,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
+import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, title: 'Dashboard' },
@@ -42,6 +47,10 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const auth = useAuth();
   const router = useRouter();
+  const { state, toggleSidebar } = useSidebar();
+  const isMobile = useIsMobile();
+  
+  const isCollapsed = state === 'collapsed';
 
   const handleLogout = async () => {
     if (auth) {
@@ -52,53 +61,50 @@ export function DashboardSidebar() {
 
 
   return (
-    <>
-      <SidebarHeader className="border-b-0">
-        <Logo isDashboard />
+    <Sidebar
+      className={cn(
+        'border-r transition-all duration-300 ease-in-out',
+        isCollapsed ? 'w-20' : 'w-64'
+      )}
+    >
+      <SidebarHeader className="border-b h-14 flex items-center justify-between px-4">
+        {!isCollapsed && <Logo isDashboard />}
+        {!isMobile && (
+           <Button variant="ghost" size="icon" onClick={toggleSidebar} className="h-8 w-8">
+            <ChevronLeft className={cn("h-5 w-5 transition-transform duration-300", isCollapsed && "rotate-180")} />
+          </Button>
+        )}
       </SidebarHeader>
-      <SidebarContent className="p-2">
+      <SidebarContent className="p-4 flex-1">
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <Link href={item.href}>
                 <SidebarMenuButton
                   isActive={pathname === item.href}
-                  tooltip={item.title}
-                  className="justify-center"
+                  className={cn("h-10 justify-start", isCollapsed && "w-10 justify-center")}
                 >
                   <item.icon className="h-5 w-5" />
+                  {!isCollapsed && <span className="ml-3">{item.title}</span>}
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="border-t-0 p-2">
+      <SidebarFooter className="border-t p-4">
          <SidebarMenu>
-          {bottomNavItems.map((item) => (
-             <SidebarMenuItem key={item.href}>
-              <Link href={item.href}>
-                <SidebarMenuButton
-                  isActive={pathname === item.href}
-                  tooltip={item.title}
-                   className="justify-center"
-                >
-                  <item.icon className="h-5 w-5" />
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-           <SidebarMenuItem>
+            <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={handleLogout}
-                  tooltip="Logout"
-                  className="justify-center"
+                  className={cn("h-10 justify-start", isCollapsed && "w-10 justify-center")}
                 >
                   <LogOut className="h-5 w-5" />
+                  {!isCollapsed && <span className="ml-3">Logout</span>}
                 </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-    </>
+    </Sidebar>
   );
 }
