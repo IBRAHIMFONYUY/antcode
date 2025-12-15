@@ -10,41 +10,39 @@ import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Expert } from '@/lib/types';
+import { Progress } from './ui/progress';
 
 const bookingSchema = z.object({
   date: z.date({
     required_error: 'A date is required.',
   }),
-  time: z.string({
-    required_error: 'Please select a time.',
+  duration: z.string({
+    required_error: 'Please select a duration.',
   }),
-  notes: z.string().max(500).optional(),
 });
 
 type BookingFormValues = z.infer<typeof bookingSchema>;
 
-// Dummy availability
-const availableTimes = [
-  '09:00 AM',
-  '10:00 AM',
-  '11:00 AM',
-  '02:00 PM',
-  '03:00 PM',
-  '04:00 PM',
-];
+const availableDurations = [
+  { duration: 15, price: 156 },
+  { duration: 30, price: 312 },
+  { duration: 45, price: 468 },
+  { duration: 60, price: 600 },
+]
 
-export function BookingForm({ expert }: { expert: Expert }) {
+export function BookingForm({ expert, onBookingConfirmed }: { expert: Expert; onBookingConfirmed: () => void }) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
+    defaultValues: {
+      duration: '15'
+    }
   });
 
   async function onSubmit(data: BookingFormValues) {
@@ -55,40 +53,29 @@ export function BookingForm({ expert }: { expert: Expert }) {
 
     toast({
       title: 'Session Booked!',
-      description: `Your session with ${expert.name} on ${format(data.date, 'PPP')} at ${data.time} has been confirmed.`,
+      description: `Your ${data.duration} minute session with ${expert.name} on ${format(data.date, 'PPP')} has been confirmed.`,
     });
     form.reset();
+    onBookingConfirmed();
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="font-semibold">Select date and time</h3>
+            <span className='text-sm text-muted-foreground'>Step 1 of 3</span>
+          </div>
+          <Progress value={33} className='h-1' />
+        </div>
+        
         <FormField
           control={form.control}
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={'outline'}
-                      className={cn(
-                        'w-full pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, 'PPP')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+              <FormControl>
                   <Calendar
                     mode="single"
                     selected={field.value}
@@ -96,50 +83,37 @@ export function BookingForm({ expert }: { expert: Expert }) {
                     disabled={(date) =>
                       date < new Date(new Date().setHours(0,0,0,0))
                     }
-                    initialFocus
+                    className="p-0"
                   />
-                </PopoverContent>
-              </Popover>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="time"
+          name="duration"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Time</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select an available time slot" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {availableTimes.map((time) => (
-                    <SelectItem key={time} value={time}>
-                      {time}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Notes (Optional)</FormLabel>
+            <FormItem className="space-y-3">
+              <FormLabel className="font-semibold">Select duration</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="What would you like to discuss? (e.g., career advice, code review)"
-                  className="resize-none"
-                  {...field}
-                />
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="grid grid-cols-2 gap-4"
+                >
+                  {availableDurations.map((item) => (
+                    <FormItem key={item.duration}>
+                      <FormControl>
+                        <RadioGroupItem value={String(item.duration)} className="sr-only" />
+                      </FormControl>
+                      <Label className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
+                        <span>{item.duration} min</span>
+                        <span className="text-muted-foreground text-sm">${item.price}</span>
+                      </Label>
+                    </FormItem>
+                  ))}
+                </RadioGroup>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -147,7 +121,7 @@ export function BookingForm({ expert }: { expert: Expert }) {
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          Confirm Booking
+          Confirm & Book
         </Button>
       </form>
     </Form>
