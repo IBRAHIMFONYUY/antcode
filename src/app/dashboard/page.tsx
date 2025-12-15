@@ -23,8 +23,8 @@ export default function DashboardPage() {
   }
   
   if (!user) {
-    router.push('/login');
-    return null;
+    // The useUser hook already handles redirection, so we can just return a loader or null.
+    return <div className='flex items-center justify-center h-full'><Loader2 className="h-8 w-8 animate-spin" /></div>;
   }
   
   return (
