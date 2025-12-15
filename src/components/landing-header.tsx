@@ -85,7 +85,7 @@ export function LandingHeader() {
       >
         <div className={cn(
             "flex items-center transition-all duration-300",
-            isHovered ? "w-full" : "w-auto"
+            isHovered ? "w-auto" : "w-full justify-center"
         )}>
             <Logo />
             <nav className={cn(
@@ -108,7 +108,7 @@ export function LandingHeader() {
         </div>
         <div className={cn(
             "flex items-center space-x-4 transition-opacity duration-300 ease-in-out", 
-            isHovered ? "opacity-100 delay-200" : "opacity-0"
+            isHovered ? "opacity-100 delay-200" : "w-0 opacity-0"
         )}>
           <Button variant="ghost" asChild>
             <Link href="/auth/login">Login</Link>
