@@ -108,8 +108,11 @@ export function BookingForm({ expert, onBookingConfirmed }: { expert: Expert; on
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-muted-foreground uppercase tracking-wider text-sm">{steps[currentStep - 1].title}</h3>
-            <span className='text-sm text-muted-foreground'>Step {currentStep} of {steps.length}</span>
+            <div>
+              <h3 className="text-xl font-bold">{steps[currentStep - 1].title}</h3>
+              <p className="text-muted-foreground">Showing available time slots in your local time.</p>
+            </div>
+            <span className='text-sm font-medium text-muted-foreground'>Step {currentStep} of {steps.length}</span>
         </div>
         <Progress value={(currentStep / steps.length) * 100} className='h-1' />
         
@@ -117,7 +120,7 @@ export function BookingForm({ expert, onBookingConfirmed }: { expert: Expert; on
         {currentStep === 2 && <Step2 form={form} expert={expert} />}
         {currentStep === 3 && <Step3 form={form} expert={expert} price={price} />}
 
-        <div className="flex justify-between items-center pt-4">
+        <div className="flex justify-between items-center pt-4 border-t mt-12">
             <div>
               {currentStep > 1 && (
                 <Button type="button" variant="ghost" onClick={prevStep}>
@@ -145,12 +148,10 @@ export function BookingForm({ expert, onBookingConfirmed }: { expert: Expert; on
 
 function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
   const selectedDate = form.watch('date');
-  const selectedTime = form.watch('time');
-  const selectedDuration = form.watch('duration');
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-       <div>
+    <div className='grid grid-cols-1 md:grid-cols-2 gap-8 items-start'>
+       <div className='flex justify-center'>
          <FormField
             control={form.control}
             name="date"
@@ -162,7 +163,6 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                        className="rounded-md border"
                     />
                 </FormControl>
                 <FormMessage />
@@ -170,13 +170,13 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
             )}
         />
        </div>
-       <div className='space-y-6'>
+       <div className='space-y-8'>
          <FormField
             control={form.control}
             name="duration"
             render={({ field }) => (
-                <FormItem className="space-y-3">
-                <FormLabel className="font-semibold">Select duration</FormLabel>
+                <FormItem className="space-y-4">
+                <FormLabel className="font-semibold text-base">Select duration</FormLabel>
                 <FormControl>
                     <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-2 gap-4">
                     {availableDurations.map((item) => (
@@ -185,11 +185,11 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
                             <RadioGroupItem value={String(item.duration)} id={`duration-${item.duration}`} className="sr-only" />
                         </FormControl>
                         <Label htmlFor={`duration-${item.duration}`} className={cn(
-                            "flex flex-col items-center justify-between rounded-md border-2 p-4 cursor-pointer transition-colors",
+                            "flex flex-col items-center justify-center rounded-lg border-2 p-4 cursor-pointer transition-colors",
                             "border-muted bg-popover hover:bg-accent hover:text-accent-foreground",
-                            field.value === String(item.duration) && "border-primary bg-primary/5"
+                            field.value === String(item.duration) && "border-primary bg-primary/10"
                         )}>
-                            <span>{item.duration} min</span>
+                            <span className='font-bold'>{item.duration} min</span>
                             <span className="text-muted-foreground text-sm">${item.price}</span>
                         </Label>
                         </FormItem>
@@ -204,19 +204,19 @@ function Step1({ form }: { form: UseFormReturn<BookingFormValues> }) {
             control={form.control}
             name="time"
             render={({ field }) => (
-                <FormItem className="space-y-3">
-                <FormLabel className="font-semibold">Select time on {format(selectedDate, 'PPP')}</FormLabel>
+                <FormItem className="space-y-4">
+                <FormLabel className="font-semibold text-base">Select time for <span className='text-primary'>{format(selectedDate, 'PPP')}</span></FormLabel>
                 <FormControl>
-                    <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-3 gap-2">
+                    <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-3 gap-3">
                         {availableTimes.map((time) => (
                             <FormItem key={time}>
                                 <FormControl>
                                     <RadioGroupItem value={time} id={`time-${time}`} className="sr-only" />
                                 </FormControl>
                                 <Label htmlFor={`time-${time}`} className={cn(
-                                    "flex items-center justify-center rounded-md border-2 px-4 py-2 cursor-pointer transition-colors",
+                                    "flex items-center justify-center rounded-md border-2 p-3 cursor-pointer transition-colors font-medium",
                                     "border-muted bg-popover hover:bg-accent hover:text-accent-foreground",
-                                    field.value === time && "border-primary bg-primary/5 text-primary-foreground"
+                                    field.value === time && "border-primary bg-primary text-primary-foreground"
                                 )}>
                                     {time}
                                 </Label>
@@ -428,5 +428,3 @@ function Step3({ form, expert, price }: { form: UseFormReturn<BookingFormValues>
         </div>
     )
 }
-
-    
