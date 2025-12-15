@@ -9,7 +9,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
 import { BookingDialog } from '@/components/booking-dialog';
 
-
 export default function ExpertProfilePage({ params }: { params: { id: string } }) {
   const expert = experts.find((e) => e.id === params.id);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
