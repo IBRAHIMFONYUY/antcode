@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,15 +23,14 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
   useEffect(() => {
-    // Redirect logged-in users who land here
-    if (user) {
-      router.push('/dashboard');
-    }
-  }, [user, router]);
+    // The useUser hook handles redirection for logged-in users,
+    // so we can show a loader while that check is happening.
+  }, []);
 
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -50,6 +49,7 @@ export default function SignupPage() {
         uid: user.uid,
         displayName: fullName,
         email: user.email,
+        phoneNumber: phoneNumber,
         role: 'student', // Hardcoded to 'student' for security
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -99,7 +99,8 @@ export default function SignupPage() {
         }, { merge: true });
         router.push('/onboarding');
       }
-    } catch (error: any) {
+    } catch (error: any)
+      {
       console.error("Google Sign-in error:", error);
        toast({
         variant: 'destructive',
@@ -121,7 +122,7 @@ export default function SignupPage() {
       <CardHeader>
         <CardTitle className="text-2xl">Create an Account</CardTitle>
         <CardDescription>
-          Join MentorVerse to accelerate your tech career.
+          Join AntCodeHub to accelerate your tech career.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -145,6 +146,16 @@ export default function SignupPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+           <div className="grid gap-2">
+            <Label htmlFor="phone-number">Phone Number</Label>
+            <Input
+              id="phone-number"
+              type="tel"
+              placeholder="+1 234 567 890"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
             />
           </div>
           <div className="grid gap-2">

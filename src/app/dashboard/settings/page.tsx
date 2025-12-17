@@ -33,6 +33,7 @@ export default function SettingsPage() {
 
     const [displayName, setDisplayName] = useState('');
     const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [bio, setBio] = useState('');
     const [techCareer, setTechCareer] = useState('');
     const [loading, setLoading] = useState(false);
@@ -46,6 +47,7 @@ export default function SettingsPage() {
                     const userData = userDoc.data();
                     setDisplayName(userData.displayName || '');
                     setEmail(userData.email || '');
+                    setPhoneNumber(userData.phoneNumber || '');
                     setBio(userData.bio || '');
                     setTechCareer(userData.techCareer || '');
                 }
@@ -77,6 +79,7 @@ export default function SettingsPage() {
             const userDocRef = doc(firestore, 'users', user.uid);
             await setDoc(userDocRef, {
                 displayName,
+                phoneNumber,
                 bio,
                 techCareer
             }, { merge: true });
@@ -120,20 +123,26 @@ export default function SettingsPage() {
                             <Input id="email" type="email" value={email} disabled />
                         </div>
                     </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="tech-career">Tech Career</Label>
-                        <Select onValueChange={setTechCareer} value={techCareer}>
-                            <SelectTrigger id="tech-career">
-                                <SelectValue placeholder="Select your career path" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {techCareers.map((career) => (
-                                    <SelectItem key={career} value={career}>
-                                        {career}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="phone-number">Phone Number</Label>
+                            <Input id="phone-number" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+                        </div>
+                        <div className="grid gap-2">
+                           <Label htmlFor="tech-career">Tech Career</Label>
+                            <Select onValueChange={setTechCareer} value={techCareer}>
+                                <SelectTrigger id="tech-career">
+                                    <SelectValue placeholder="Select your career path" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {techCareers.map((career) => (
+                                        <SelectItem key={career} value={career}>
+                                            {career}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="bio">Bio</Label>

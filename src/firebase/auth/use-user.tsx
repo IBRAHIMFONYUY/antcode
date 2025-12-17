@@ -16,6 +16,7 @@ export type UserProfile = {
   createdAt: any; // Can be Date or serverTimestamp
   updatedAt?: any;
   bio?: string;
+  phoneNumber?: string;
 };
 
 export function useUser() {
