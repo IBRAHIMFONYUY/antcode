@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged, type User } from 'firebase/auth';
-import { doc, getDoc, onSnapshot, DocumentData } from 'firebase/firestore';
+import { doc, onSnapshot, type DocumentData } from 'firebase/firestore';
 import { useAuth, useFirestore } from '../provider';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -13,10 +13,10 @@ export type UserProfile = {
   photoURL?: string;
   role: 'student' | 'mentor';
   techCareer?: string;
-  createdAt: Date;
+  createdAt: any; // Can be Date or serverTimestamp
+  updatedAt?: any;
   bio?: string;
 };
-
 
 export function useUser() {
   const auth = useAuth();
@@ -30,14 +30,13 @@ export function useUser() {
 
   useEffect(() => {
     if (!auth || !firestore) {
-      // Firebase services are not ready, wait for the provider to initialize them.
+      // Firebase services not yet available.
       return;
     }
 
     const authUnsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        // User is logged in, set up a real-time listener for their profile.
         const userDocRef = doc(firestore, 'users', user.uid);
         
         const profileUnsubscribe = onSnapshot(userDocRef, (doc) => {
@@ -45,27 +44,34 @@ export function useUser() {
             const userProfile = doc.data() as UserProfile;
             setProfile(userProfile);
             
+            // If user is on a public page but hasn't finished onboarding, redirect them.
             if (!userProfile.techCareer && !pathname.startsWith('/onboarding')) {
               router.push('/onboarding');
             }
           } else {
-             // This can happen with social auth on first login.
-             // The signup/onboarding flow will create the document.
+             // This can happen if the doc isn't created yet (e.g., social auth).
+             // Redirect to onboarding to complete profile.
              if (!pathname.startsWith('/onboarding') && !pathname.startsWith('/signup')) {
                 router.push('/onboarding');
              }
           }
           setLoading(false);
         }, (error) => {
-          // onSnapshot's error listener handles permission issues, etc.
-          // It's less likely to be an "offline" error here, as listeners handle that.
           console.error("Firestore snapshot error:", error);
-          setUser(null);
-          setProfile(null);
-          setLoading(false);
+           if (error.code === 'unavailable') {
+              // This can happen in multi-tab scenarios. It's a temporary state.
+              // We don't want to log out the user, just wait for Firestore to recover.
+              console.warn("Firestore is temporarily unavailable. Waiting for connection...");
+              // State remains loading.
+            } else {
+              // A more serious error occurred.
+              setUser(null);
+              setProfile(null);
+              setLoading(false);
+            }
         });
 
-        // Return the unsubscribe function for the profile listener
+        // Cleanup profile listener on auth state change.
         return () => profileUnsubscribe();
 
       } else {
@@ -73,17 +79,22 @@ export function useUser() {
         setUser(null);
         setProfile(null);
         setLoading(false);
-        if (!['/login', '/signup', '/', '/#about', '/#features', '/#faq', '/#why-choose-us'].includes(pathname) && !pathname.startsWith('/experts') && !pathname.startsWith('/courses')) {
+        
+        // Define public routes that don't require authentication
+        const publicRoutes = ['/login', '/signup', '/', '/#about', '/#features', '/#faq', '/#why-choose-us'];
+        const isPublicRoute = publicRoutes.includes(pathname) || pathname.startsWith('/experts') || pathname.startsWith('/courses');
+        
+        if (!isPublicRoute) {
              router.push('/login');
         }
       }
     }, (error) => {
-      // Auth state error
+      // Auth state change error
       console.error('Auth state change error:', error);
       setLoading(false);
     });
 
-    // Return the unsubscribe function for the auth listener
+    // Cleanup auth listener on component unmount
     return () => authUnsubscribe();
 
   }, [auth, firestore, router, pathname]);
