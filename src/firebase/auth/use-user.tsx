@@ -29,41 +29,54 @@ export function useUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Start loading and wait for Firebase services to be available.
+    setLoading(true);
+
     if (!auth || !firestore) {
-      if (!auth && !pathname.startsWith('/login') && !pathname.startsWith('/signup')) {
-        // router.push('/login');
-      }
-      setLoading(false);
+      // If Firebase services are not ready, we wait.
+      // The effect will re-run when the provider initializes them.
+      // We shouldn't redirect here, as it might be a temporary state.
       return;
     }
 
     const unsubscribe = onAuthStateChanged(
       auth,
       async (user) => {
-        setLoading(true);
         if (user) {
           setUser(user);
-          const userDocRef = doc(firestore, 'users', user.uid);
-          const userDoc = await getDoc(userDocRef);
+          try {
+            const userDocRef = doc(firestore, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
 
-          if (userDoc.exists()) {
-             const userProfile = userDoc.data() as UserProfile;
-             setProfile(userProfile);
-            // Redirect to onboarding if techCareer is missing
-            if (!userProfile.techCareer && !pathname.startsWith('/onboarding')) {
-              router.push('/onboarding');
+            if (userDoc.exists()) {
+              const userProfile = userDoc.data() as UserProfile;
+              setProfile(userProfile);
+              // Redirect to onboarding if techCareer is missing, but not if we're already there.
+              if (!userProfile.techCareer && !pathname.startsWith('/onboarding')) {
+                router.push('/onboarding');
+              }
+            } else {
+              // This can happen with social auth on first login.
+              // Redirect to a page that will create the user document.
+              if (!pathname.startsWith('/onboarding') && !pathname.startsWith('/signup')) {
+                router.push('/onboarding');
+              }
             }
-          } else {
-            // This case might happen for Google sign-in before the doc is created.
-            // Redirecting to onboarding which handles doc creation.
-            if (!pathname.startsWith('/onboarding') && !pathname.startsWith('/signup')) {
-               router.push('/onboarding');
+          } catch (error: any) {
+             // This is where the 'client is offline' error would be caught.
+             // We'll log it and let the loading state continue,
+             // hoping persistence or reconnection will resolve it.
+            console.error('Firestore fetch error:', error);
+            if (error.code === 'unavailable') { // More specific check for offline error
+                // Don't set user to null, just wait for network.
+                // The app will show a loader.
+                return;
             }
           }
         } else {
           setUser(null);
           setProfile(null);
-          // Only redirect if not on a public page
+          // Only redirect if on a protected route.
            if (!['/login', '/signup', '/'].includes(pathname) && !pathname.startsWith('/experts') && !pathname.startsWith('/courses')) {
              router.push('/login');
            }
