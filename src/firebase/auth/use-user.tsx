@@ -77,7 +77,7 @@ export function useUser() {
           setUser(null);
           setProfile(null);
           // Only redirect if on a protected route.
-           if (!['/login', '/signup', '/'].includes(pathname) && !pathname.startsWith('/experts') && !pathname.startsWith('/courses')) {
+           if (!['/login', '/signup', '/', '/#about', '/#features', '/#faq', '/#why-choose-us'].includes(pathname) && !pathname.startsWith('/experts') && !pathname.startsWith('/courses')) {
              router.push('/login');
            }
         }
