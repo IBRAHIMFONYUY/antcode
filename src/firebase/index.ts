@@ -1,6 +1,12 @@
 import { getApps, initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
-import { getFirestore, type Firestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import {
+  getFirestore,
+  initializeFirestore,
+  type Firestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
 import { firebaseConfig } from './config';
 
 // The infamous "Firebase has already been initialized" error is avoided
@@ -16,7 +22,6 @@ function initializeFirebase() {
 
 // We store the instances in a memoized object to avoid re-creating them on every render.
 const services = new Map();
-let persistenceEnabled = false;
 
 function getFirebaseServices() {
   const app = initializeFirebase();
@@ -25,19 +30,17 @@ function getFirebaseServices() {
   }
 
   const auth = getAuth(app);
-  const firestore = getFirestore(app);
+  let firestore: Firestore;
 
-  if (typeof window !== 'undefined' && !persistenceEnabled) {
-    enableIndexedDbPersistence(firestore).catch((err) => {
-      if (err.code == 'failed-precondition') {
-        console.warn('Firestore persistence failed: Multiple tabs open');
-      } else if (err.code == 'unimplemented') {
-        console.warn('Firestore persistence failed: Browser does not support it.');
-      }
+  if (typeof window !== 'undefined') {
+    // For the client, initialize Firestore with multi-tab persistence.
+    firestore = initializeFirestore(app, {
+      cache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
     });
-    persistenceEnabled = true;
+  } else {
+    // For the server, initialize Firestore without persistence.
+    firestore = getFirestore(app);
   }
-  
 
   const newServices = { app, auth, firestore };
   services.set(app, newServices);
