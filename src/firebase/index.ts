@@ -27,7 +27,7 @@ function getFirebaseServices() {
   const auth = getAuth(app);
   const firestore = getFirestore(app);
 
-  if (!persistenceEnabled) {
+  if (typeof window !== 'undefined' && !persistenceEnabled) {
     enableIndexedDbPersistence(firestore).catch((err) => {
       if (err.code == 'failed-precondition') {
         console.warn('Firestore persistence failed: Multiple tabs open');
@@ -47,8 +47,9 @@ function getFirebaseServices() {
 
 export {
   FirebaseProvider,
-  FirebaseClientProvider,
 } from './provider';
+
+export { FirebaseClientProvider } from './client-provider';
 
 export { useUser } from './auth/use-user';
 export {

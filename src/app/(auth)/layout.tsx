@@ -1,5 +1,15 @@
 import type { ReactNode } from 'react';
+import { Suspense } from 'react';
 import { Logo } from '@/components/logo';
+import { Loader2 } from 'lucide-react';
+
+function AuthLoading() {
+    return (
+        <div className="flex min-h-screen items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+    );
+}
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
@@ -7,7 +17,9 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className='mb-8'>
             <Logo />
         </div>
-      {children}
+      <Suspense fallback={<AuthLoading />}>
+        {children}
+      </Suspense>
     </div>
   );
 }
