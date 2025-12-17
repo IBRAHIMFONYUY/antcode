@@ -7,10 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useFirestore, useUser } from '@/firebase';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { Logo } from '@/components/logo';
+import { Input } from '@/components/ui/input';
 
 const techCareers = [
     "Frontend Developer",
@@ -29,19 +30,18 @@ export default function OnboardingPage() {
   const { toast } = useToast();
 
   const [techCareer, setTechCareer] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   
   useEffect(() => {
-    // If user is logged in but has already completed onboarding, redirect them.
     if (user && firestore) {
-      // Using the profile from useUser might be stale here, so we fetch directly.
       const checkOnboarding = async () => {
-        const userDoc = await doc(firestore, 'users', user.uid);
-        const snapshot = await (await import('firebase/firestore')).getDoc(userDoc);
-        if (snapshot.exists() && snapshot.data().techCareer) {
+        const userDocRef = doc(firestore, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists() && userDoc.data().techCareer) {
           router.push('/dashboard');
         }
-      }
+      };
       checkOnboarding();
     }
   }, [user, firestore, router]);
@@ -73,6 +73,7 @@ export default function OnboardingPage() {
     try {
         await setDoc(doc(firestore, 'users', user.uid), {
             techCareer: techCareer,
+            phoneNumber: phoneNumber,
             updatedAt: serverTimestamp()
         }, { merge: true });
 
@@ -88,7 +89,7 @@ export default function OnboardingPage() {
         toast({
             variant: 'destructive',
             title: 'Update Failed',
-            description: error.message || "Could not save your career path.",
+            description: error.message || "Could not save your details.",
         });
     } finally {
         setLoading(false);
@@ -102,13 +103,23 @@ export default function OnboardingPage() {
         </div>
         <Card className="mx-auto w-full max-w-sm">
         <CardHeader>
-            <CardTitle className="text-2xl">Welcome to MentorVerse!</CardTitle>
+            <CardTitle className="text-2xl">Welcome to AntCodeHub!</CardTitle>
             <CardDescription>
-            One last step. To personalize your experience, please select your primary career path.
+            Just a couple more details to personalize your experience.
             </CardDescription>
         </CardHeader>
         <CardContent>
             <form onSubmit={handleOnboardingSubmit} className="grid gap-4">
+                <div className="grid gap-2">
+                    <Label htmlFor="phone-number">Phone Number</Label>
+                    <Input
+                        id="phone-number"
+                        type="tel"
+                        placeholder="+1 234 567 890"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                    />
+                </div>
                 <div className="grid gap-2">
                     <Label htmlFor="tech-career">Your Tech Career</Label>
                     <Select onValueChange={setTechCareer} value={techCareer} required>

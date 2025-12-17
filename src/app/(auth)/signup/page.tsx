@@ -12,6 +12,17 @@ import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, sign
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const techCareers = [
+    "Frontend Developer",
+    "Backend Developer",
+    "Full Stack Developer",
+    "Data Scientist",
+    "UI/UX Designer",
+    "DevOps Engineer",
+    "Mobile Developer",
+];
 
 export default function SignupPage() {
   const { user, loading: userLoading } = useUser();
@@ -24,18 +35,29 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [techCareer, setTechCareer] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
   useEffect(() => {
-    // The useUser hook handles redirection for logged-in users,
-    // so we can show a loader while that check is happening.
-  }, []);
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user, router]);
 
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth || !firestore) return;
+
+    if (!techCareer) {
+        toast({
+            variant: 'destructive',
+            title: 'Tech Career Required',
+            description: 'Please select your tech career path.',
+        });
+        return;
+    }
 
     setLoading(true);
     try {
@@ -44,18 +66,18 @@ export default function SignupPage() {
 
       await updateProfile(user, { displayName: fullName });
 
-      // Always create user with 'student' role.
       await setDoc(doc(firestore, 'users', user.uid), {
         uid: user.uid,
         displayName: fullName,
         email: user.email,
         phoneNumber: phoneNumber,
-        role: 'student', // Hardcoded to 'student' for security
+        techCareer: techCareer,
+        role: 'student',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
       
-      router.push('/onboarding');
+      router.push('/dashboard');
     } catch (error: any) {
       console.error("Signup error:", error);
       toast({
@@ -79,23 +101,18 @@ export default function SignupPage() {
       const userDocRef = doc(firestore, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
 
-      if (userDoc.exists()) {
-        // User already exists, check if they have completed onboarding
-        if(userDoc.data().techCareer) {
-            router.push('/dashboard');
-        } else {
-            router.push('/onboarding');
-        }
+      if (userDoc.exists() && userDoc.data().techCareer) {
+        // User exists and has completed onboarding
+        router.push('/dashboard');
       } else {
-        // New Google user, create their profile with default role
+        // New Google user or existing user who hasn't onboarded
         await setDoc(userDocRef, {
             uid: user.uid,
             displayName: user.displayName,
             email: user.email,
             photoURL: user.photoURL,
-            role: 'student', // Hardcoded to 'student' for security
+            role: 'student',
             createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
         }, { merge: true });
         router.push('/onboarding');
       }
@@ -112,7 +129,6 @@ export default function SignupPage() {
     }
   };
   
-  // Show a loader while checking for user auth state or if user is logged in
   if (userLoading || user) {
     return <div className='flex items-center justify-center h-screen'><Loader2 className="h-8 w-8 animate-spin" /></div>;
   }
@@ -158,6 +174,21 @@ export default function SignupPage() {
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
           </div>
+           <div className="grid gap-2">
+                <Label htmlFor="tech-career">Tech Career</Label>
+                <Select onValueChange={setTechCareer} value={techCareer}>
+                    <SelectTrigger id="tech-career">
+                        <SelectValue placeholder="Select your career path" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {techCareers.map((career) => (
+                            <SelectItem key={career} value={career}>
+                                {career}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
             <Input 
