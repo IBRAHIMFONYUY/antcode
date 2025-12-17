@@ -120,14 +120,8 @@ export default function SignupPage() {
     }
   };
   
-  if (userLoading) {
+  if (userLoading || user) {
     return <div className='flex items-center justify-center h-screen'><Loader2 className="h-8 w-8 animate-spin" /></div>;
-  }
-
-  // Redirect logged-in users who land here
-  if (user) {
-    router.push('/dashboard');
-    return null;
   }
 
   return (
