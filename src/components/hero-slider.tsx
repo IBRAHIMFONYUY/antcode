@@ -29,7 +29,7 @@ export function HeroSlider() {
   }, []);
 
   return (
-    <div className="relative">
+    <div>
       <div className="relative" style={{ minHeight: '220px' }}>
         {heroSlides.map((slide, index) => (
           <div
