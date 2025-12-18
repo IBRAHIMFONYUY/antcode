@@ -79,6 +79,32 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Expert Showcase Section */}
+      <section className="bg-muted py-20 md:py-28">
+        <div className="container">
+          <div className="text-center">
+            <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
+              Meet Our Experts
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+              Hand-picked professionals ready to guide you.
+            </p>
+          </div>
+          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredExperts.map((expert) => (
+                <ExpertCard key={expert.id} expert={expert} />
+            ))}
+          </div>
+          <div className="mt-12 text-center">
+             <Button size="lg" variant="outline" asChild>
+              <Link href="/experts">
+                Explore All Experts <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* About Section */}
       <section id="about" className="py-20 md:py-28">
           <div className="container">
@@ -182,32 +208,6 @@ export default function LandingPage() {
                   </Button>
                 </div>
               ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Expert Showcase Section */}
-      <section className="bg-muted py-20 md:py-28">
-        <div className="container">
-          <div className="text-center">
-            <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-              Meet Our Experts
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              Hand-picked professionals ready to guide you.
-            </p>
-          </div>
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredExperts.map((expert) => (
-                <ExpertCard key={expert.id} expert={expert} />
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-             <Button size="lg" variant="outline" asChild>
-              <Link href="/experts">
-                Explore All Experts <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
           </div>
         </div>
       </section>

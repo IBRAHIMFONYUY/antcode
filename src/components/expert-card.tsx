@@ -13,7 +13,7 @@ export function ExpertCard({ expert, className }: ExpertCardProps) {
   return (
     <Link href={`/experts/${expert.id}`} className={cn("group block", className)}>
       <div className="overflow-hidden rounded-xl">
-        <div className="relative aspect-[3/4] overflow-hidden">
+        <div className="relative aspect-[4/5] overflow-hidden">
           <Image
             src={expert.imageUrl}
             alt={expert.name}
