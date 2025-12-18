@@ -86,8 +86,8 @@ export default function LandingPage() {
           </div>
           <div className="mt-12 text-center">
              <Button size="lg" variant="outline" asChild>
-              <Link href="/experts">
-                Explore All Experts <ArrowRight className="ml-2 h-4 w-4" />
+              <Link href="/experts" className="group">
+                Explore All Experts <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
           </div>
@@ -188,12 +188,12 @@ export default function LandingPage() {
           </div>
           <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               {offerings.map((offering) => (
-                <div key={offering.title} className="bg-card p-8 rounded-xl shadow-sm border flex flex-col">
+                <div key={offering.title} className="bg-card p-8 rounded-xl shadow-sm border flex flex-col group">
                   <offering.icon className="h-10 w-10 text-primary mb-4" />
                   <h3 className="text-xl font-bold mb-2">{offering.title}</h3>
                   <p className="text-muted-foreground flex-grow">{offering.description}</p>
                   <Button variant="link" className="p-0 h-auto justify-start mt-4 text-primary">
-                    Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                    Learn More <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </div>
               ))}

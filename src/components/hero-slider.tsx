@@ -57,13 +57,13 @@ export function HeroSlider() {
                 {heroSlides[0].description}
             </p>
          </div>
-        <div className="mt-16 flex justify-center gap-4">
+        <div className="mt-24 flex justify-center gap-4">
             <Button size="lg" asChild>
             <Link href="/signup">Get Started</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-            <Link href="/experts">
-                Find an Expert <ArrowRight className="ml-2 h-4 w-4" />
+            <Link href="/experts" className="group">
+                Find an Expert <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             </Button>
         </div>
