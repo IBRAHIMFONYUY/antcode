@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -6,6 +8,7 @@ import { experts, faqs } from '@/lib/data';
 import { ExpertCard } from '@/components/expert-card';
 import { Faq } from '@/components/faq';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { HeroSlider } from '@/components/hero-slider';
 
 export default function LandingPage() {
   const featuredExperts = experts.slice(0, 6);
@@ -60,22 +63,8 @@ export default function LandingPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] md:w-[150%] md:h-[150%] lg:w-[100%] lg:h-[100%] bg-grid-pattern opacity-20 animate-spin-slow"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-primary/20 rounded-full blur-3xl"></div>
           
-          <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            Learn, Build, and Grow with Industry Experts
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Combine 1-on-1 mentorship with structured learning paths to accelerate your career in tech. Get guidance from the best in the industry.
-          </p>
-          <div className="mt-10 flex justify-center gap-4">
-            <Button size="lg" asChild>
-              <Link href="/signup">Get Started</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/experts">
-                Find an Expert <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
+          <HeroSlider />
+
         </div>
       </section>
 

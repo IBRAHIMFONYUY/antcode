@@ -103,11 +103,22 @@ export default {
             transform: 'rotate(360deg)',
           },
         },
+        'fade-in-down': {
+            '0%': {
+                opacity: '0',
+                transform: 'translateY(-20px)'
+            },
+            '100%': {
+                opacity: '1',
+                transform: 'translateY(0)'
+            },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'spin-slow': 'spin-slow 60s linear infinite',
+        'fade-in-down': 'fade-in-down 1s ease-out forwards',
       },
     },
   },
