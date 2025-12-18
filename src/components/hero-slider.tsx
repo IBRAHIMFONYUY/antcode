@@ -57,7 +57,7 @@ export function HeroSlider() {
                 {heroSlides[0].description}
             </p>
          </div>
-        <div className="mt-10 flex justify-center gap-4">
+        <div className="mt-16 flex justify-center gap-4">
             <Button size="lg" asChild>
             <Link href="/signup">Get Started</Link>
             </Button>
