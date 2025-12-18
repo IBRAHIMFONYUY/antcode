@@ -59,7 +59,7 @@ export function HeroSlider() {
           </p>
       </div>
 
-      <div className="relative z-10 mt-24 flex justify-center gap-4">
+      <div className="relative z-10 mt-10 flex justify-center gap-4">
         <Button size="lg" asChild>
           <Link href="/signup">Get Started</Link>
         </Button>
