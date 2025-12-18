@@ -30,43 +30,44 @@ export function HeroSlider() {
 
   return (
     <div className="relative">
-      {heroSlides.map((slide, index) => (
-        <div
-          key={index}
-          className={cn(
-            'absolute inset-0 flex flex-col items-center justify-center transition-all duration-1000 ease-in-out',
-            currentSlide === index ? 'opacity-100 animate-fade-in-down' : 'opacity-0'
-          )}
-        >
-          <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            {slide.title}
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            {slide.description}
-          </p>
-        </div>
-      ))}
-      {/* Buttons are outside the sliding content to remain static */}
-      <div className={cn("transition-opacity duration-1000", heroSlides.length > 0 ? 'opacity-100' : 'opacity-0')}>
-          {/* This div is used to take up space so buttons are positioned correctly */}
-         <div className="invisible">
+      <div className="relative" style={{ minHeight: '220px' }}>
+        {heroSlides.map((slide, index) => (
+          <div
+            key={index}
+            className={cn(
+              'absolute inset-0 flex flex-col items-center justify-center transition-all duration-1000 ease-in-out',
+              currentSlide === index ? 'opacity-100 animate-fade-in-down' : 'opacity-0'
+            )}
+          >
             <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                {heroSlides[0].title}
+              {slide.title}
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-                {heroSlides[0].description}
+              {slide.description}
             </p>
-         </div>
-        <div className="mt-24 flex justify-center gap-4">
-            <Button size="lg" asChild>
-            <Link href="/signup">Get Started</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-            <Link href="/experts" className="group">
-                Find an Expert <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-            </Button>
-        </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* This div is used to take up space so buttons are positioned correctly */}
+      <div className="invisible">
+          <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              {heroSlides[0].title}
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+              {heroSlides[0].description}
+          </p>
+      </div>
+
+      <div className="relative z-10 mt-24 flex justify-center gap-4">
+        <Button size="lg" asChild>
+          <Link href="/signup">Get Started</Link>
+        </Button>
+        <Button size="lg" variant="outline" asChild>
+          <Link href="/experts" className="group">
+            Find an Expert <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </Button>
       </div>
     </div>
   );
