@@ -70,7 +70,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
   const ussdCode = `*126*9*677020718*${price}#`;
   const telLink = `tel:${ussdCode.replace(/#/g, '%23')}`;
   
-  const whatsAppNumber = "237677020718";
+  const whatsAppNumber = "+237677020718";
   
   const whatsAppMessage = encodeURIComponent(
     `Hello, I have made a payment of $${price} for a session with ${expert.name}.\n\n` +
@@ -357,7 +357,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
                   <p className="mt-2 text-muted-foreground max-w-sm">
                     Your session is pending verification. To complete the process, please send your payment screenshot via WhatsApp for confirmation.
                   </p>
-                  <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className='w-full max-w-xs mt-6'>
+                  <a href={whatsAppLink}  rel="noopener noreferrer" className='w-full max-w-xs mt-6'>
                     <Button className='w-full'>
                       <MessageCircle className="mr-2 h-4 w-4" />
                       Send Proof via WhatsApp
