@@ -6,6 +6,7 @@ function getImageUrl(id: string) {
     return PlaceHolderImages.find(img => img.id === id)?.imageUrl ?? "https://picsum.photos/seed/placeholder/200/200";
 }
 
+
 export const experts: Expert[] = [
   {
     id: '1',
@@ -14,7 +15,7 @@ export const experts: Expert[] = [
     company: 'Innovate Inc.',
     expertise: ['React', 'TypeScript', 'Node.js', 'Web Performance'],
     about: 'Ibrahim is a seasoned engineer with a passion for building scalable and performant web applications. He loves mentoring and helping developers grow.',
-    imageUrl: getImageUrl('expert-1'),
+    imageUrl: 'https://media.licdn.com/dms/image/v2/D5603AQG5ktF3QD7z-A/profile-displayphoto-crop_800_800/B56ZjJFeYnHQAM-/0/1755720317415?e=1769644800&v=beta&t=KDVQzNwM2tUPesH_Amn0B0wzS_UUVyQMMCcUOsi2VW8',
     rating: 4.9,
     reviews: 120,
     session: { duration: 60, price: 150 },
@@ -26,7 +27,7 @@ export const experts: Expert[] = [
     company: 'CloudFlow',
     expertise: ['AWS', 'Serverless', 'DevOps', 'Microservices'],
     about: 'Yondo is a cloud expert who specializes in designing robust and scalable cloud-native architectures on AWS. He enjoys solving complex infrastructure challenges.',
-    imageUrl: getImageUrl('expert-2'),
+    imageUrl: 'https://media.licdn.com/dms/image/v2/D5603AQEZDY-9O32ZZQ/profile-displayphoto-crop_800_800/B56ZmL3dkaG4AI-/0/1758988198886?e=1769644800&v=beta&t=NyhFVI7LnGM_xx8NAMKmTg9LvKjOLDXLmb-2Ry2unD8',
     rating: 4.8,
     reviews: 95,
     session: { duration: 60, price: 200 },
@@ -38,23 +39,12 @@ export const experts: Expert[] = [
     company: 'DesignFirst',
     expertise: ['UI/UX', 'Figma', 'User Research', 'Design Systems'],
     about: 'Abara is a creative and user-centric UX leader who believes in crafting intuitive and beautiful digital experiences. She has a keen eye for detail.',
-    imageUrl: getImageUrl('expert-3'),
+    imageUrl: 'https://media.licdn.com/dms/image/v2/D4E03AQHCF6tDu5sStg/profile-displayphoto-crop_800_800/B4EZuPBZ.NIUAI-/0/1767631133360?e=1769644800&v=beta&t=YMLFyumL8HzQNvzfKZpBjpXXEWyBYcVA3EgVsE7CBVQ',
     rating: 5.0,
     reviews: 210,
     session: { duration: 45, price: 120 },
   },
-  {
-    id: '4',
-    name: 'MOFIRO JEAN',
-    role: 'AI/ML Scientist',
-    company: 'DataMind AI',
-    expertise: ['Python', 'TensorFlow', 'NLP', 'Computer Vision'],
-    about: 'Mofiro is an AI researcher dedicated to pushing the boundaries of machine learning. He is passionate about applying AI to solve real-world problems.',
-    imageUrl: getImageUrl('expert-4'),
-    rating: 4.9,
-    reviews: 78,
-    session: { duration: 60, price: 180 },
-  },
+  
     {
     id: '5',
     name: 'YUMBI LEO',
@@ -74,7 +64,7 @@ export const experts: Expert[] = [
     company: 'SecureNet',
     expertise: ['Penetration Testing', 'Network Security', 'Ethical Hacking'],
     about: 'Soh is a cybersecurity professional with a knack for finding vulnerabilities before the bad guys do. He is committed to making the digital world a safer place.',
-    imageUrl: getImageUrl('expert-6'),
+    imageUrl: 'https://media.licdn.com/dms/image/v2/D4E03AQE3sahX_9ce3A/profile-displayphoto-crop_800_800/B4EZjyYJqFGcAI-/0/1756413077723?e=1769644800&v=beta&t=FeDr-wSgdN2utbqZuuXae4W0zx0FDMWfup7gCnxVNps',
     rating: 4.8,
     reviews: 65,
     session: { duration: 90, price: 250 },
