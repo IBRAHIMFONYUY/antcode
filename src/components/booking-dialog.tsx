@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Loader2, X, Phone, Upload, CheckCircle2 } from 'lucide-react';
+import { Loader2, X, Phone, Upload, CheckCircle2, MessageCircle } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 
@@ -69,15 +69,18 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
 
   const ussdCode = `*126*9*677020718*${price}#`;
   const telLink = `tel:${ussdCode.replace(/#/g, '%23')}`;
-
+  
+  const whatsAppNumber = "237677020718";
+  const whatsAppMessage = encodeURIComponent(`Hello, I have made a payment of $${price} for a session with ${expert.name}. Please find the screenshot attached for verification.`);
+  const whatsAppLink = `https://wa.me/${whatsAppNumber}?text=${whatsAppMessage}`;
 
   function handlePaymentVerification() {
     setLoading(true);
-    // Simulate a 2-second verification process
+    // Simulate moving to the next step, no actual server verification here
     setTimeout(() => {
       setLoading(false);
       setStep(4);
-    }, 2000);
+    }, 1000);
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -339,11 +342,17 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                     </svg>
                    </div>
-                  <h2 className="text-2xl font-semibold">Session Booked 🎉</h2>
+                  <h2 className="text-2xl font-semibold">Session Booked Successfully!</h2>
                   <p className="mt-2 text-muted-foreground max-w-sm">
-                    Your payment is being verified. A calendar invite and confirmation will be sent to you upon successful verification.
+                    Your session is pending verification. To complete the process, please send your payment screenshot via WhatsApp.
                   </p>
-                  <Button onClick={() => handleOpenChange(false)} className='mt-6'>Done</Button>
+                  <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className='w-full max-w-xs mt-6'>
+                    <Button className='w-full'>
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Send Proof via WhatsApp
+                    </Button>
+                  </a>
+                  <Button variant="ghost" onClick={() => handleOpenChange(false)} className='mt-2'>Done</Button>
                 </div>
               )}
             </main>
@@ -367,7 +376,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
                     disabled={!screenshotFile || loading}
                     onClick={handlePaymentVerification}
                   >
-                    {loading ? <><Loader2 className="animate-spin mr-2"/>Verifying...</> : "I have paid, Verify & Complete"}
+                    {loading ? <><Loader2 className="animate-spin mr-2"/>Proceeding...</> : "Proceed to Final Step"}
                   </Button>
                 ) : (
                   <Button
