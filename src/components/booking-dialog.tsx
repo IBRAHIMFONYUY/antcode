@@ -71,7 +71,18 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
   const telLink = `tel:${ussdCode.replace(/#/g, '%23')}`;
   
   const whatsAppNumber = "237677020718";
-  const whatsAppMessage = encodeURIComponent(`Hello, I have made a payment of $${price} for a session with ${expert.name}. Please find the screenshot attached for verification.`);
+  
+  const whatsAppMessage = encodeURIComponent(
+    `Hello, I have made a payment of $${price} for a session with ${expert.name}.\n\n` +
+    `Booking Details:\n` +
+    `-------------------\n` +
+    `Mentor: ${expert.name}\n` +
+    `Date: ${selectedDate}\n` +
+    `Time: ${time}\n` +
+    `Duration: ${duration} min\n` +
+    `Goal: ${goal}\n\n` +
+    `Please find the screenshot attached for verification. Thank you!`
+  );
   const whatsAppLink = `https://wa.me/${whatsAppNumber}?text=${whatsAppMessage}`;
 
   function handlePaymentVerification() {
@@ -344,7 +355,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
                    </div>
                   <h2 className="text-2xl font-semibold">Session Booked Successfully!</h2>
                   <p className="mt-2 text-muted-foreground max-w-sm">
-                    Your session is pending verification. To complete the process, please send your payment screenshot via WhatsApp.
+                    Your session is pending verification. To complete the process, please send your payment screenshot via WhatsApp for confirmation.
                   </p>
                   <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className='w-full max-w-xs mt-6'>
                     <Button className='w-full'>
@@ -376,7 +387,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
                     disabled={!screenshotFile || loading}
                     onClick={handlePaymentVerification}
                   >
-                    {loading ? <><Loader2 className="animate-spin mr-2"/>Proceeding...</> : "Proceed to Final Step"}
+                    {loading ? <><Loader2 className="animate-spin mr-2"/>Verifying...</> : "I have paid, Verify & Complete"}
                   </Button>
                 ) : (
                   <Button
