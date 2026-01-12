@@ -2,7 +2,7 @@
 
 Welcome to **AntCodeHub**, a modern platform designed to connect aspiring tech professionals with industry experts for mentorship, structured learning, and career acceleration. This project is built with Next.js, TypeScript, Tailwind CSS, and Firebase.
 
-![AntCodeHub Screenshot](https://picsum.photos/seed/app-screenshot/1200/630)
+![AntCodeHub Screenshot](https://media.licdn.com/dms/image/v2/D4E22AQHVe07fRpRaIg/feedshare-shrink_2048_1536/B4EZdm8vmYGcAo-/0/1749778894591?e=1769644800&v=beta&t=mD9X4au5rfANHdpfAb3c9jxf6WZbrKE2rhnosDje9es)
 
 ## ✨ Features
 
