@@ -49,17 +49,9 @@ export function HeroSlider() {
         ))}
       </div>
       
-      {/* This div is used to take up space so buttons are positioned correctly */}
-      <div className="invisible">
-          <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              {heroSlides[0].title}
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              {heroSlides[0].description}
-          </p>
-      </div>
+     
 
-      <div className="relative z-10 mt-8 flex justify-center gap-4">
+      <div className="relative z-10 mt-28 flex justify-center gap-4">
         <Button size="lg" asChild>
           <Link href="/signup">Get Started</Link>
         </Button>
