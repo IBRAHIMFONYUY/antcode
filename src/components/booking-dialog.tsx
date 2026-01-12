@@ -15,10 +15,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, X, Phone, Upload, CheckCircle2 } from 'lucide-react';
 import { Separator } from './ui/separator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 
 const DURATIONS = [
   { duration: 15, price: 20 },
@@ -56,7 +56,8 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
   const [experience, setExperience] = useState<string | null>(null);
 
   // Step 3
-  const [agreed, setAgreed] = useState(false);
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const price = useMemo(() => {
@@ -66,13 +67,33 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
   const step1Valid = selectedDate && time && duration;
   const step2Valid = goal.trim().length >= 20;
 
-  function handlePayment() {
+  const ussdCode = `*126*9*677020718*${price}#`;
+  const telLink = `tel:${ussdCode.replace(/#/g, '%23')}`;
+
+
+  function handlePaymentVerification() {
     setLoading(true);
+    // Simulate a 2-second verification process
     setTimeout(() => {
       setLoading(false);
       setStep(4);
     }, 2000);
   }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setScreenshotFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setScreenshotPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setScreenshotFile(null);
+      setScreenshotPreview(null);
+    }
+  };
   
   // Reset state when modal is closed
   const handleOpenChange = (open: boolean) => {
@@ -84,7 +105,8 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
         setTime(null);
         setGoal('');
         setExperience(null);
-        setAgreed(false);
+        setScreenshotFile(null);
+        setScreenshotPreview(null);
         setLoading(false);
       }, 300);
     }
@@ -241,27 +263,60 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
 
               {/* STEP 3 */}
               {step === 3 && (
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_1fr]">
-                  <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
-                    <h3 className="font-medium">Payment Details</h3>
-                    <Input placeholder="Card Number" />
-                    <div className="flex gap-3">
-                      <Input placeholder="MM / YY" />
-                      <Input placeholder="CVV" />
-                    </div>
-                    <Input placeholder="Cardholder Name" />
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr]">
+                  <div className="space-y-6">
+                      <h3 className="font-medium text-lg">Payment Procedure</h3>
 
-                    <div className="flex items-start space-x-2 pt-2">
-                       <Checkbox 
-                        id="terms"
-                        checked={agreed}
-                        onCheckedChange={(checked) => setAgreed(!!checked)}
-                      />
-                      <Label htmlFor="terms" className="text-sm text-muted-foreground">
-                        I agree to the <a href="#" className="underline text-primary">Terms</a> & <a href="#" className="underline text-primary">Cancellation Policy</a>
-                      </Label>
-                    </div>
+                       <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
+                        <AccordionItem value="item-1">
+                          <AccordionTrigger>Step 1: Make Payment</AccordionTrigger>
+                          <AccordionContent className="space-y-4">
+                            <p className="text-muted-foreground">
+                              Dial the code below on your mobile phone to pay for the session.
+                            </p>
+                            <div className="flex items-center gap-3 rounded-lg border bg-secondary p-3">
+                              <code className="font-mono text-base font-semibold">{ussdCode}</code>
+                               <a href={telLink} className='ml-auto'>
+                                <Button size="sm">
+                                  <Phone className="mr-2 h-4 w-4" />
+                                  Dial Now
+                                </Button>
+                              </a>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-2">
+                          <AccordionTrigger>Step 2: Upload Proof of Payment</AccordionTrigger>
+                          <AccordionContent className="space-y-4">
+                             <p className="text-muted-foreground">
+                              After payment, take a screenshot of the confirmation message and upload it below.
+                            </p>
 
+                            <div className="space-y-2">
+                              <Label htmlFor="screenshot-upload" className={cn(
+                                "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50",
+                                screenshotPreview && "border-primary"
+                              )}>
+                                {screenshotPreview ? (
+                                  <div className='flex flex-col items-center justify-center text-center'>
+                                    <CheckCircle2 className="h-8 w-8 text-green-500 mb-2" />
+                                    <p className="font-semibold text-sm">Image Selected!</p>
+                                    <p className='text-xs text-muted-foreground'>{screenshotFile?.name}</p>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center justify-center">
+                                    <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                                    <p className="text-sm font-semibold">Click to upload screenshot</p>
+                                    <p className="text-xs text-muted-foreground">PNG, JPG, or GIF</p>
+                                  </div>
+                                )}
+                              </Label>
+                              <Input id="screenshot-upload" type="file" className="sr-only" onChange={handleFileChange} accept="image/*" />
+                            </div>
+
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
                   </div>
 
                   <div className="rounded-xl bg-muted/50 p-5 space-y-3 lg:sticky lg:top-0">
@@ -286,7 +341,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
                    </div>
                   <h2 className="text-2xl font-semibold">Session Booked 🎉</h2>
                   <p className="mt-2 text-muted-foreground max-w-sm">
-                    A calendar invite and confirmation email have been sent to you.
+                    Your payment is being verified. A calendar invite and confirmation will be sent to you upon successful verification.
                   </p>
                   <Button onClick={() => handleOpenChange(false)} className='mt-6'>Done</Button>
                 </div>
@@ -309,10 +364,10 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
                 {step === 3 ? (
                   <Button
                     type="button"
-                    disabled={!agreed || loading}
-                    onClick={handlePayment}
+                    disabled={!screenshotFile || loading}
+                    onClick={handlePaymentVerification}
                   >
-                    {loading ? <><Loader2 className="animate-spin mr-2"/>Processing...</> : `Confirm & Pay $${price}`}
+                    {loading ? <><Loader2 className="animate-spin mr-2"/>Verifying...</> : "I have paid, Verify & Complete"}
                   </Button>
                 ) : (
                   <Button
