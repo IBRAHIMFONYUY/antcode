@@ -109,3 +109,48 @@ export type ExpertAvailability = {
     slots: ExpertAvailabilitySlot[];
 };
 
+// Task and Task Review Types
+export type TaskStatus = 'pending' | 'submitted' | 'under-review' | 'reviewed' | 'completed';
+
+export type StudentTask = {
+    id: string;
+    courseId: string;
+    title: string;
+    description: string;
+    dueDate: string; // ISO string
+    status: TaskStatus;
+    studentId: string;
+    studentName: string;
+    createdAt: Date | { seconds: number; nanoseconds: number };
+    updatedAt: Date | { seconds: number; nanoseconds: number };
+};
+
+export type TaskSubmission = {
+    id: string;
+    taskId: string;
+    studentId: string;
+    studentName: string;
+    studentEmail: string;
+    submissionText: string;
+    submissionCode?: string;
+    fileUrl?: string;
+    submittedAt: Date | { seconds: number; nanoseconds: number };
+    status: 'pending' | 'submitted' | 'reviewed';
+};
+
+export type TaskReview = {
+    id: string;
+    submissionId: string;
+    taskId: string;
+    mentorId: string;
+    mentorName: string;
+    studentId: string;
+    knowledgeGaps: string;
+    targetedFeedback: string;
+    overallAssessment: string;
+    rating: number; // 1-5 scale
+    isPeerReviewed?: boolean;
+    reviewedAt: Date | { seconds: number; nanoseconds: number };
+    createdAt: Date | { seconds: number; nanoseconds: number };
+};
+

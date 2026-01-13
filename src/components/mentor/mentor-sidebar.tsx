@@ -23,6 +23,7 @@ import {
   Settings,
   ChevronLeft,
   Award,
+  CheckCircle,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { useAuth } from '@/firebase';
@@ -35,6 +36,7 @@ const mentorNavItems = [
   { href: '/dashboard/mentor/sessions', icon: Calendar, title: 'Sessions' },
   { href: '/dashboard/mentor/students', icon: Users, title: 'Students' },
   { href: '/dashboard/mentor/courses', icon: BookOpen, title: 'Courses' },
+  { href: '/dashboard/mentor/task-review', icon: CheckCircle, title: 'Task Review' },
   { href: '/dashboard/mentor/earnings', icon: BarChart3, title: 'Earnings' },
 ];
 
