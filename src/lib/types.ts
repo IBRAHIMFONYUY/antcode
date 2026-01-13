@@ -69,3 +69,40 @@ export type UpcomingCourse = {
     attendees: string[];
     icon: LucideIcon;
 };
+
+// Booking System Types
+export type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
+
+export type Booking = {
+    id: string;
+    studentId: string;
+    studentName: string;
+    studentEmail: string;
+    mentorId: string;
+    mentorName: string;
+    mentorImageUrl: string;
+    dateTime: string; // ISO string
+    duration: number; // in minutes
+    price: number;
+    status: BookingStatus;
+    notes?: string;
+    createdAt: Date | { seconds: number; nanoseconds: number };
+    updatedAt: Date | { seconds: number; nanoseconds: number };
+};
+
+export type ExpertAvailabilitySlot = {
+    id: string;
+    expertId: string;
+    date: string; // YYYY-MM-DD format
+    startTime: string; // HH:mm format
+    endTime: string; // HH:mm format
+    isBooked: boolean;
+    bookingId?: string;
+    createdAt: Date | { seconds: number; nanoseconds: number };
+};
+
+export type ExpertAvailability = {
+    expertId: string;
+    slots: ExpertAvailabilitySlot[];
+};
+

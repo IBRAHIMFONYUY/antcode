@@ -13,6 +13,7 @@ import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { handleError, logError } from '@/utils/error-handler';
 
 const techCareers = [
     "Frontend Developer",
@@ -79,12 +80,13 @@ export default function SignupPage() {
       });
       
       router.push('/dashboard');
-    } catch (error: any) {
-      console.error("Signup error:", error);
+    } catch (error) {
+      const appError = handleError(error);
+      logError(appError);
       toast({
         variant: 'destructive',
-        title: 'Signup Failed',
-        description: error.message,
+        title: appError.title,
+        description: appError.message,
       });
     } finally {
       setLoading(false);
@@ -117,13 +119,13 @@ export default function SignupPage() {
         }, { merge: true });
         router.push('/onboarding');
       }
-    } catch (error: any)
-      {
-      console.error("Google Sign-in error:", error);
-       toast({
+    } catch (error) {
+      const appError = handleError(error);
+      logError(appError);
+      toast({
         variant: 'destructive',
-        title: 'Google Sign-in Failed',
-        description: error.message,
+        title: appError.title,
+        description: appError.message,
       });
     } finally {
       setGoogleLoading(false);

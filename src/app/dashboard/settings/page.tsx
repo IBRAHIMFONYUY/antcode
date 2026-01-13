@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { handleError, logError } from '@/utils/error-handler';
 
 const techCareers = [
     "Frontend Developer",
@@ -89,12 +90,13 @@ export default function SettingsPage() {
                 description: 'Your profile has been updated.',
             });
 
-        } catch (error: any) {
-            console.error("Profile update error:", error);
+        } catch (error) {
+            const appError = handleError(error);
+            logError(appError);
             toast({
                 variant: 'destructive',
-                title: 'Update Failed',
-                description: error.message,
+                title: appError.title,
+                description: appError.message,
             });
         } finally {
             setLoading(false);

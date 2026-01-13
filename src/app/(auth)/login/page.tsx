@@ -11,6 +11,7 @@ import { useAuth, useUser } from '@/firebase';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { handleError, logError } from '@/utils/error-handler';
 
 export default function LoginPage() {
   const { user, loading: userLoading } = useUser();
@@ -32,12 +33,13 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/dashboard');
-    } catch (error: any) {
-      console.error(error);
+    } catch (error) {
+      const appError = handleError(error);
+      logError(appError);
       toast({
         variant: 'destructive',
-        title: 'Login Failed',
-        description: error.message,
+        title: appError.title,
+        description: appError.message,
       });
     } finally {
       setLoading(false);
@@ -51,12 +53,13 @@ export default function LoginPage() {
     try {
       await signInWithPopup(auth, provider);
       router.push('/dashboard');
-    } catch (error: any) {
-      console.error(error);
+    } catch (error) {
+      const appError = handleError(error);
+      logError(appError);
       toast({
         variant: 'destructive',
-        title: 'Google Sign-in Failed',
-        description: error.message,
+        title: appError.title,
+        description: appError.message,
       });
     } finally {
       setGoogleLoading(false);

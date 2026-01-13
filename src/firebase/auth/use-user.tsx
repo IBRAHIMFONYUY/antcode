@@ -13,8 +13,8 @@ export type UserProfile = {
   photoURL?: string;
   role: 'student' | 'mentor';
   techCareer?: string;
-  createdAt: any; // Can be Date or serverTimestamp
-  updatedAt?: any;
+  createdAt: Date | { seconds: number; nanoseconds: number };
+  updatedAt?: Date | { seconds: number; nanoseconds: number };
   bio?: string;
   phoneNumber?: string;
 };

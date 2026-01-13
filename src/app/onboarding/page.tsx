@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { Input } from '@/components/ui/input';
+import { handleError, logError } from '@/utils/error-handler';
 
 const techCareers = [
     "Frontend Developer",
@@ -84,12 +85,13 @@ export default function OnboardingPage() {
         
         router.push('/dashboard');
 
-    } catch (error: any) {
-        console.error("Onboarding error:", error);
+    } catch (error) {
+        const appError = handleError(error);
+        logError(appError);
         toast({
             variant: 'destructive',
-            title: 'Update Failed',
-            description: error.message || "Could not save your details.",
+            title: appError.title,
+            description: appError.message,
         });
     } finally {
         setLoading(false);
