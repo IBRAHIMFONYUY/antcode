@@ -17,6 +17,14 @@ export type UserProfile = {
   updatedAt?: Date | { seconds: number; nanoseconds: number };
   bio?: string;
   phoneNumber?: string;
+  // Mentor-specific fields
+  expertise?: string[];
+  hourlyRate?: number;
+  availability?: Record<string, boolean>; // e.g., { "monday": true, "tuesday": false }
+  totalStudents?: number;
+  totalSessions?: number;
+  rating?: number;
+  reviews?: number;
 };
 
 export function useUser() {

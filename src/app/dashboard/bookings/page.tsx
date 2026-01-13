@@ -69,7 +69,7 @@ export default function BookingsPage() {
     return null;
   }
 
-  const upcomingBookings = bookings.filter((b) => new Date(b.dateTime) > new Date() && b.status !== 'cancelled');
+  const upcomingBookings = bookings.filter((b) => new Date(b.startTime) > new Date() && b.status !== 'cancelled');
   const completedBookings = bookings.filter((b) => b.status === 'completed');
   const cancelledBookings = bookings.filter((b) => b.status === 'cancelled');
   const pendingBookings = bookings.filter((b) => b.status === 'pending');
@@ -220,7 +220,7 @@ function BookingCard({ booking, onCancel, isCanceling = false, canCancelBooking 
               <Calendar className="h-4 w-4" />
               Date & Time
             </p>
-            <p className="font-medium">{formatBookingDateTime(booking.dateTime)}</p>
+            <p className="font-medium">{formatBookingDateTime(booking.startTime)}</p>
           </div>
 
           <div className="space-y-1">
@@ -236,7 +236,7 @@ function BookingCard({ booking, onCancel, isCanceling = false, canCancelBooking 
               <DollarSign className="h-4 w-4" />
               Price
             </p>
-            <p className="font-medium">${booking.price.toFixed(2)}</p>
+            <p className="font-medium">${booking.totalPrice.toFixed(2)}</p>
           </div>
 
           <div className="space-y-1">

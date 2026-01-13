@@ -145,7 +145,9 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
 
     try {
       // Create booking data
-      const bookingDateTime = new Date(`${selectedDate}T${selectedTime}`).toISOString();
+      const startDateTime = new Date(`${selectedDate}T${selectedTime}`).toISOString();
+      const endDate = new Date(`${selectedDate}T${selectedTime}`);
+      endDate.setMinutes(endDate.getMinutes() + Number(duration));
 
       const bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'> = {
         studentId: user.uid,
@@ -154,11 +156,14 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
         mentorId: expert.id,
         mentorName: expert.name,
         mentorImageUrl: expert.imageUrl,
-        dateTime: bookingDateTime,
+        startTime: startDateTime,
+        endTime: endDate.toISOString(),
         duration: Number(duration),
-        price: totalPrice,
+        totalPrice: totalPrice,
+        topic: goal || 'Tutoring Session',
+        goal: goal,
         status: 'pending',
-        notes: `Experience Level: ${experience}\nGoal: ${goal}\nAdditional Notes: ${notes}`,
+        notes: `Experience Level: ${experience}\nAdditional Notes: ${notes}`,
       };
 
       // Validate booking data

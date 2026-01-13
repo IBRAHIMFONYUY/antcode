@@ -27,7 +27,7 @@ export function formatBookingDateTime(dateTimeStr: string): string {
  * Check if a booking is in the future
  */
 export function isUpcomingBooking(booking: Booking): boolean {
-  const bookingDate = new Date(booking.dateTime);
+  const bookingDate = new Date(booking.startTime);
   return bookingDate > new Date();
 }
 
@@ -35,7 +35,7 @@ export function isUpcomingBooking(booking: Booking): boolean {
  * Check if a booking is in the past
  */
 export function isPastBooking(booking: Booking): boolean {
-  const bookingDate = new Date(booking.dateTime);
+  const bookingDate = new Date(booking.startTime);
   return bookingDate < new Date();
 }
 
@@ -94,11 +94,14 @@ export function validateBookingData(data: Partial<Booking>): {
 
   if (!data.studentId) errors.push('Student ID is required');
   if (!data.mentorId) errors.push('Mentor ID is required');
-  if (!data.dateTime) errors.push('Date and time are required');
+  if (!data.startTime) errors.push('Start time is required');
+  if (!data.endTime) errors.push('End time is required');
   if (!data.duration || data.duration <= 0) errors.push('Duration must be greater than 0');
-  if (!data.price || data.price < 0) errors.push('Price cannot be negative');
+  if (!data.totalPrice || data.totalPrice < 0) errors.push('Price cannot be negative');
+  if (!data.topic) errors.push('Topic is required');
+  if (!data.goal) errors.push('Goal is required');
 
-  const bookingDate = new Date(data.dateTime || '');
+  const bookingDate = new Date(data.startTime || '');
   if (bookingDate < new Date()) {
     errors.push('Booking date must be in the future');
   }
@@ -125,7 +128,7 @@ export function canCancelBooking(booking: Booking, hoursBeforeNotice: number = 2
     return false;
   }
 
-  const bookingDate = new Date(booking.dateTime);
+  const bookingDate = new Date(booking.startTime);
   const now = new Date();
   const hoursDifference = (bookingDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 

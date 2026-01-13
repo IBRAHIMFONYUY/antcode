@@ -81,9 +81,12 @@ export type Booking = {
     mentorId: string;
     mentorName: string;
     mentorImageUrl: string;
-    dateTime: string; // ISO string
+    startTime: string; // ISO string
+    endTime: string; // ISO string
     duration: number; // in minutes
-    price: number;
+    totalPrice: number;
+    topic: string;
+    goal: string;
     status: BookingStatus;
     notes?: string;
     createdAt: Date | { seconds: number; nanoseconds: number };
