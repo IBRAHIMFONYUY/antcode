@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,7 @@ import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { handleError, logError } from '@/utils/error-handler';
 
 export default function LoginPage() {
-  const { user, loading: userLoading } = useUser();
+  const { user, profile, loading: userLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -25,6 +25,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  const redirectToDashboard = (userProfile: any) => {
+    if (userProfile?.role === 'mentor') {
+      router.push('/dashboard/mentor');
+    } else {
+      router.push('/dashboard');
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth) return;
@@ -32,7 +40,14 @@ export default function LoginPage() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/dashboard');
+      // Wait a moment for profile to be fetched
+      setTimeout(() => {
+        if (profile?.role === 'mentor') {
+          router.push('/dashboard/mentor');
+        } else {
+          router.push('/dashboard');
+        }
+      }, 500);
     } catch (error) {
       const appError = handleError(error);
       logError(appError);
@@ -52,7 +67,14 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/dashboard');
+      // Wait a moment for profile to be fetched
+      setTimeout(() => {
+        if (profile?.role === 'mentor') {
+          router.push('/dashboard/mentor');
+        } else {
+          router.push('/dashboard');
+        }
+      }, 500);
     } catch (error) {
       const appError = handleError(error);
       logError(appError);
@@ -65,14 +87,19 @@ export default function LoginPage() {
       setGoogleLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!userLoading && user && profile) {
+      redirectToDashboard(profile);
+    }
+  }, [userLoading, user, profile, router]);
   
   if (userLoading) {
     return <div className='flex items-center justify-center h-screen'><Loader2 className="h-8 w-8 animate-spin" /></div>;
   }
 
   if (user) {
-    router.push('/dashboard');
-    return null;
+    return <div className='flex items-center justify-center h-screen'><Loader2 className="h-8 w-8 animate-spin" /></div>;
   }
 
   return (
