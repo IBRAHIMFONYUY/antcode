@@ -23,6 +23,7 @@ import {
   LogOut,
   Settings,
   ChevronLeft,
+  BookMarked,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { useAuth } from '@/firebase';
@@ -33,6 +34,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, title: 'Dashboard' },
   { href: '/dashboard/courses', icon: BookOpen, title: 'My Courses' },
+  { href: '/dashboard/bookings', icon: BookMarked, title: 'My Bookings' },
   { href: '/dashboard/tasks', icon: ListTodo, title: 'Tasks' },
   { href: '/dashboard/reports', icon: BarChart2, title: 'Reports' },
   { href: '/dashboard/sessions', icon: Calendar, title: 'Mentorship' },
