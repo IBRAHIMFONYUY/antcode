@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useMentor } from '@/hooks/use-mentor';
 import { useBookings } from '@/hooks/use-bookings';
+import { useRealtimeCollection } from '@/hooks/use-realtime';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,33 +16,26 @@ type SessionStatus = 'all' | 'confirmed' | 'pending' | 'completed' | 'cancelled'
 
 export default function MentorSessionsPage() {
   const { user, profile, loading: mentorLoading } = useMentor();
-  const { getMentorBookings, updateBookingStatus, loading: bookingsLoading } = useBookings();
+  const { updateBookingStatus, loading: bookingsLoading } = useBookings();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   const [activeTab, setActiveTab] = useState<SessionStatus>('all');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!mentorLoading && profile && user) {
-      loadSessions();
-    }
-  }, [mentorLoading, profile, user]);
+  // Use realtime bookings for mentor
+  const { data: realtimeBookings, loading: realtimeLoading } = useRealtimeCollection('bookings', {
+    where: [{ field: 'mentorId', op: '==', value: user?.uid }],
+    orderBy: { field: 'startTime', direction: 'desc' },
+    limit: 500,
+  });
 
-  const loadSessions = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const mentorBookings = await getMentorBookings(user!.uid);
-      setBookings(mentorBookings);
-      filterBookings(mentorBookings, activeTab);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load sessions';
-      setError(message);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (!mentorLoading && realtimeBookings) {
+      setBookings(realtimeBookings as Booking[]);
+      filterBookings(realtimeBookings as Booking[], activeTab);
     }
-  };
+  }, [mentorLoading, realtimeBookings, activeTab]);
 
   const filterBookings = (allBookings: Booking[], status: SessionStatus) => {
     if (status === 'all') {
@@ -66,7 +60,7 @@ export default function MentorSessionsPage() {
     try {
       setLoading(true);
       await updateBookingStatus(bookingId, newStatus as any);
-      await loadSessions();
+      // realtime listener will update bookings; no manual reload needed
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to update session status';
       setError(message);

@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { serverTimestamp, collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { serverTimestamp } from 'firebase/firestore';
+import { useRealtimeCollection } from '@/hooks/use-realtime';
 
 export default function AskPage() {
   const db = useFirestore();
@@ -19,20 +20,13 @@ export default function AskPage() {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<any[]>([]);
 
+  // realtime questions
+  const { data: questionsData, loading: questionsLoading } = useRealtimeCollection('questions', { orderBy: { field: 'createdAt', direction: 'desc' }, limit: 100 });
+
   useEffect(() => {
-    if (!db) return;
-    // load recent public questions
-    (async () => {
-      try {
-        const col = collection(db, 'questions');
-        const q = query(col, orderBy('createdAt', 'desc'));
-        const snap = await getDocs(q);
-        setQuestions(snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })));
-      } catch (err) {
-        // ignore
-      }
-    })();
-  }, [db]);
+    if (!questionsData) return;
+    setQuestions(questionsData);
+  }, [questionsData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

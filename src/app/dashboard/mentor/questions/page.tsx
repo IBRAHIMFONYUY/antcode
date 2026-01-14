@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useFirestore, useUser } from '@/firebase';
-import { collection, query, orderBy, getDocs, addDoc, serverTimestamp, where } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useMentor } from '@/hooks/use-mentor';
+import { useRealtimeCollection } from '@/hooks/use-realtime';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,21 +21,19 @@ export default function MentorQuestionsPage() {
   const [activeQuestion, setActiveQuestion] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Use realtime listeners for questions and answers
+  const { data: questionsData, loading: questionsLoading } = useRealtimeCollection('questions', { orderBy: { field: 'createdAt', direction: 'desc' }, limit: 100 });
+  const { data: answersData } = useRealtimeCollection('answers', { orderBy: { field: 'createdAt', direction: 'asc' }, limit: 500 });
+
   useEffect(() => {
-    if (!db) return;
-    (async () => {
-      const q = query(collection(db, 'questions'), orderBy('createdAt', 'desc'));
-      const snap = await getDocs(q);
-      const qs = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
-      // fetch answers for each question
-      for (const qItem of qs) {
-        const answersQ = query(collection(db, 'answers'), where('questionId', '==', qItem.id), orderBy('createdAt', 'asc'));
-        const aSnap = await getDocs(answersQ);
-        qItem.answers = aSnap.docs.map(a => ({ id: a.id, ...(a.data() as any) }));
-      }
-      setQuestions(qs);
-    })();
-  }, [db]);
+    if (!questionsData) return;
+    // attach answers to questions
+    const qs = questionsData.map((qItem: any) => ({
+      ...qItem,
+      answers: answersData.filter((a: any) => a.questionId === qItem.id) || [],
+    }));
+    setQuestions(qs);
+  }, [questionsData, answersData]);
 
   if (mentorLoading) return null;
   if (!isMentor) return <div className="text-center text-muted-foreground">Access denied.</div>;
@@ -54,16 +53,6 @@ export default function MentorQuestionsPage() {
       setReply('');
       setActiveQuestion(null);
       toast({ title: 'Answer posted' });
-      // reload questions
-      const q = query(collection(db, 'questions'), orderBy('createdAt', 'desc'));
-      const snap = await getDocs(q);
-      const qs = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
-      for (const qItem of qs) {
-        const answersQ = query(collection(db, 'answers'), where('questionId', '==', qItem.id), orderBy('createdAt', 'asc'));
-        const aSnap = await getDocs(answersQ);
-        qItem.answers = aSnap.docs.map(a => ({ id: a.id, ...(a.data() as any) }));
-      }
-      setQuestions(qs);
     } catch (err) {
       toast({ variant: 'destructive', title: 'Failed to post answer' });
     } finally {

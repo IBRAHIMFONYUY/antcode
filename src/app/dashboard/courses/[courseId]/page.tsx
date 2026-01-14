@@ -3,6 +3,9 @@
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useCourse } from '@/hooks/use-courses';
+import { useState, useEffect } from 'react';
+import { useFirestore, useUser } from '@/firebase';
+import { collection, query, where, getDocs, setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,15 +15,56 @@ export default function CourseDetailPage() {
   const rawId = params?.courseId;
   const courseId = Array.isArray(rawId) ? rawId[0] : rawId ?? null;
   const { course, tasks, loading } = useCourse(courseId);
+  const db = useFirestore();
+  const { user } = useUser();
+  const [enrolled, setEnrolled] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!db || !courseId) return;
+    const check = async () => {
+      try {
+        const q = query(collection(db, 'enrollments'), where('courseId', '==', courseId));
+        const snap = await getDocs(q);
+        setEnrolled(!!(snap.docs.length && user && snap.docs.some(d => (d.data() as any).studentId === user.uid)));
+      } catch (err) {
+        setEnrolled(false);
+      }
+    };
+    check();
+  }, [db, courseId, user]);
+
+  const handleEnroll = async () => {
+    if (!db || !user || !courseId) return;
+    try {
+      const id = `${user.uid}_${courseId}`;
+      await setDoc(doc(db, 'enrollments', id), {
+        id,
+        courseId,
+        studentId: user.uid,
+        studentName: user.displayName || user.email || 'Student',
+        createdAt: serverTimestamp(),
+      });
+      setEnrolled(true);
+    } catch (err) {
+      console.error('Enroll error', err);
+    }
+  };
 
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div>;
   if (!course) return <div className="text-center">Course not found</div>;
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="space-y-2">
         <h1 className="text-2xl font-bold">{course.title}</h1>
         <p className="text-muted-foreground">{course.description}</p>
+        <div className="mt-3">
+          {enrolled === null ? null : enrolled ? (
+            <span className="inline-block rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">Enrolled</span>
+          ) : (
+            <Button onClick={handleEnroll}>Enroll in course</Button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-3">
