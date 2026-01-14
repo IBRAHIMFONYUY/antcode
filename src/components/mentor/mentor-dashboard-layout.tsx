@@ -6,6 +6,7 @@ import { useMentor } from '@/hooks/use-mentor';
 import { Loader2 } from 'lucide-react';
 import { MentorDashboardSidebar } from './mentor-sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { DashboardHeader } from '@/components/dashboard/header';
 
 export function MentorDashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, isMentor } = useMentor();
@@ -30,9 +31,18 @@ export function MentorDashboardLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <SidebarProvider>
-      <MentorDashboardSidebar />
-      <main className="flex-1">{children}</main>
-    </SidebarProvider>
+    <div className="dark bg-background text-foreground min-h-screen">
+      <SidebarProvider>
+        <div className="flex h-screen">
+          <MentorDashboardSidebar />
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <DashboardHeader />
+            <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+              {children}
+            </main>
+          </div>
+        </div>
+      </SidebarProvider>
+    </div>
   );
 }

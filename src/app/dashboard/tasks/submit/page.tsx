@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@/firebase/auth/use-user';
+import { useFirestore } from '@/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useTaskReview } from '@/hooks/use-task-review';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,6 +27,29 @@ export default function StudentTaskSubmissionPage() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isEnrolled, setIsEnrolled] = useState<boolean | null>(null);
+  const firestore = useFirestore();
+
+  useEffect(() => {
+    // If a courseId is provided, verify enrollment
+    const checkEnrollment = async () => {
+      const courseId = formData.courseId?.trim();
+      if (!courseId || !user || !firestore) {
+        setIsEnrolled(null);
+        return;
+      }
+
+      try {
+        const q = query(collection(firestore, 'enrollments'), where('courseId', '==', courseId), where('studentId', '==', user.uid));
+        const snap = await getDocs(q);
+        setIsEnrolled(!snap.empty);
+      } catch (err) {
+        setIsEnrolled(false);
+      }
+    };
+
+    checkEnrollment();
+  }, [formData.courseId, user, firestore]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +62,11 @@ export default function StudentTaskSubmissionPage() {
 
     if (!formData.taskId.trim()) {
       setError('Task ID is required');
+      return;
+    }
+
+    if (formData.courseId && isEnrolled === false) {
+      setError('You are not enrolled in this course. Enroll before submitting tasks.');
       return;
     }
 
@@ -142,6 +172,12 @@ export default function StudentTaskSubmissionPage() {
                   onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
                   disabled={loading}
                 />
+                {isEnrolled === false && (
+                  <p className="text-sm text-destructive mt-1">You are not enrolled in this course. Please enroll to submit tasks.</p>
+                )}
+                {isEnrolled === true && (
+                  <p className="text-sm text-success mt-1">Enrolled ✓ You may submit tasks for this course.</p>
+                )}
               </div>
             </div>
 

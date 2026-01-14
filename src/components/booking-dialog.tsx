@@ -130,12 +130,16 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
     }
   };
 
+  const [guestName, setGuestName] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
+
   const handlePaymentVerification = async () => {
-    if (!user) {
+    // Allow guest bookings: collect guest name/email if user is not authenticated
+    if (!user && (!guestName.trim() || !guestEmail.trim())) {
       toast({
         variant: 'destructive',
-        title: 'Error',
-        description: 'You must be logged in to book a session',
+        title: 'Missing contact information',
+        description: 'Please provide your name and email to complete booking.',
       });
       return;
     }
@@ -150,9 +154,9 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
       endDate.setMinutes(endDate.getMinutes() + Number(duration));
 
       const bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'> = {
-        studentId: user.uid,
-        studentName: user.displayName || 'Anonymous',
-        studentEmail: user.email || '',
+        studentId: user?.uid ?? `guest_${Date.now()}`,
+        studentName: user?.displayName || guestName || 'Anonymous',
+        studentEmail: user?.email || guestEmail || '',
         mentorId: expert.id,
         mentorName: expert.name,
         mentorImageUrl: expert.imageUrl,
@@ -403,6 +407,20 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
               {/* STEP 3 */}
               {step === 3 && (
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr]">
+                  {/* If user is not authenticated, collect guest contact info */}
+                  {!user && (
+                    <div className="mx-auto max-w-2xl space-y-4 lg:col-span-1">
+                      <h3 className="font-medium text-lg">Your contact details</h3>
+                      <div>
+                        <Label htmlFor="guest-name">Full name</Label>
+                        <Input id="guest-name" value={guestName} onChange={(e) => setGuestName(e.target.value)} />
+                      </div>
+                      <div>
+                        <Label htmlFor="guest-email">Email</Label>
+                        <Input id="guest-email" type="email" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} />
+                      </div>
+                    </div>
+                  )}
                   <div className="space-y-6">
                     <h3 className="font-medium text-lg">Payment Procedure</h3>
 
@@ -515,7 +533,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
                   <p className="mt-2 text-muted-foreground max-w-sm">
                     Your session is pending verification. To complete the process, please send your payment screenshot via WhatsApp for confirmation.
                   </p>
-                  <a href={whatsAppLink}  rel="noopener noreferrer" className='w-full max-w-xs mt-6'>
+                  <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className='w-full max-w-xs mt-6'>
                     <Button className='w-full'>
                       <MessageCircle className="mr-2 h-4 w-4" />
                       Send Proof via WhatsApp
