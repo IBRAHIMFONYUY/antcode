@@ -20,6 +20,7 @@ import {
   BarChart2,
   Calendar,
   UserCircle,
+  MessageCircle,
   LogOut,
   Settings,
   ChevronLeft,
@@ -37,11 +38,13 @@ const navItems = [
   { href: '/dashboard/bookings', icon: BookMarked, title: 'My Bookings' },
   { href: '/dashboard/tasks', icon: ListTodo, title: 'Tasks' },
   { href: '/dashboard/reports', icon: BarChart2, title: 'Reports' },
+  { href: '/dashboard/ask', icon: MessageCircle, title: 'Ask' },
   { href: '/dashboard/sessions', icon: Calendar, title: 'Mentorship' },
 ];
 
 const bottomNavItems = [
-    { href: '/dashboard/settings', icon: Settings, title: 'Settings' },
+  { href: '/dashboard/profile', icon: UserCircle, title: 'Profile' },
+  { href: '/dashboard/settings', icon: Settings, title: 'Settings' },
 ];
 
 export function DashboardSidebar() {

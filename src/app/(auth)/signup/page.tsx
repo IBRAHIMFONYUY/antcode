@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth, useFirestore, useUser } from '@/firebase';
+import { useWaitForProfile } from '@/hooks/use-wait-for-profile';
 import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
@@ -26,7 +27,7 @@ const techCareers = [
 ];
 
 export default function SignupPage() {
-  const { user, loading: userLoading } = useUser();
+  const { user, profile, loading: userLoading } = useUser();
   const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
@@ -40,12 +41,36 @@ export default function SignupPage() {
   const [techCareer, setTechCareer] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [awaitingProfile, setAwaitingProfile] = useState(false);
+
+  const { ready: profileReady, timedOut } = useWaitForProfile({ timeoutMs: 8000 });
 
   useEffect(() => {
     if (user) {
       router.push('/dashboard');
     }
   }, [user, router]);
+
+  // When we are awaiting the profile to appear (after signup/signin), redirect accordingly.
+  useEffect(() => {
+    if (awaitingProfile && profileReady && profile) {
+      // If user has completed onboarding, go to dashboard; otherwise onboarding will redirect from useUser
+      if (profile.techCareer) {
+        router.push('/dashboard');
+      } else {
+        router.push('/onboarding');
+      }
+      setAwaitingProfile(false);
+    }
+    if (awaitingProfile && timedOut) {
+      setAwaitingProfile(false);
+      toast({
+        variant: 'destructive',
+        title: 'Signup Warning',
+        description: 'We created your account but could not load your profile in time. Refresh or contact support if redirect does not happen.',
+      });
+    }
+  }, [awaitingProfile, profileReady, timedOut, profile, router, toast]);
 
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -78,8 +103,8 @@ export default function SignupPage() {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      
-      router.push('/dashboard');
+      // Wait for `useUser` to pick up the profile and redirect.
+      setAwaitingProfile(true);
     } catch (error) {
       const appError = handleError(error);
       logError(appError);
@@ -106,7 +131,7 @@ export default function SignupPage() {
 
       if (userDoc.exists() && userDoc.data().techCareer) {
         // User exists and has completed onboarding
-        router.push('/dashboard');
+        setAwaitingProfile(true);
       } else {
         // New Google user or existing user who hasn't onboarded
         await setDoc(userDocRef, {
@@ -117,7 +142,7 @@ export default function SignupPage() {
             role: 'student',
             createdAt: serverTimestamp(),
         }, { merge: true });
-        router.push('/onboarding');
+        setAwaitingProfile(true);
       }
     } catch (error) {
       const appError = handleError(error);

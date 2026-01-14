@@ -12,18 +12,27 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { handleError, logError } from '@/utils/error-handler';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
+import { useWaitForProfile } from '@/hooks/use-wait-for-profile';
 
 export default function LoginPage() {
   const { user, profile, loading: userLoading } = useUser();
+  const firestore = useFirestore();
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+
+  
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [awaitingProfile, setAwaitingProfile] = useState(false);
+
+  const { ready: profileReady, timedOut } = useWaitForProfile({ timeoutMs: 8000 });
 
   const redirectToDashboard = (userProfile: any) => {
     if (userProfile?.role === 'mentor') {
@@ -40,14 +49,9 @@ export default function LoginPage() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Wait a moment for profile to be fetched
-      setTimeout(() => {
-        if (profile?.role === 'mentor') {
-          router.push('/dashboard/mentor');
-        } else {
-          router.push('/dashboard');
-        }
-      }, 500);
+      // Wait for the user's profile to be populated by the `useUser` hook.
+      // We set a flag so a local effect can trigger redirect when profileReady
+      setAwaitingProfile(true);
     } catch (error) {
       const appError = handleError(error);
       logError(appError);
@@ -60,37 +64,68 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-
-  const handleGoogleSignIn = async () => {
-    if (!auth) return;
-    setGoogleLoading(true);
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      // Wait a moment for profile to be fetched
-      setTimeout(() => {
-        if (profile?.role === 'mentor') {
-          router.push('/dashboard/mentor');
+    const handleGoogleSignIn = async () => {
+      if (!auth || !firestore) return;
+      setGoogleLoading(true);
+      const provider = new GoogleAuthProvider();
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+  
+        const userDocRef = doc(firestore, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+  
+        if (userDoc.exists() && userDoc.data().techCareer) {
+          // User exists and has completed onboarding; signal awaiting profile
+          setAwaitingProfile(true);
         } else {
-          router.push('/dashboard');
+          // New Google user or existing user who hasn't onboarded - create user doc
+          await setDoc(userDocRef, {
+              uid: user.uid,
+              displayName: user.displayName,
+              email: user.email,
+              photoURL: user.photoURL,
+              role: 'student',
+              createdAt: serverTimestamp(),
+          }, { merge: true });
+          // Signal that we're waiting for the profile to appear/propagate
+          setAwaitingProfile(true);
         }
-      }, 500);
-    } catch (error) {
-      const appError = handleError(error);
-      logError(appError);
-      toast({
-        variant: 'destructive',
-        title: appError.title,
-        description: appError.message,
-      });
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
+      } catch (error) {
+        const appError = handleError(error);
+        logError(appError);
+        toast({
+          variant: 'destructive',
+          title: appError.title,
+          description: appError.message,
+        });
+      } finally {
+        setGoogleLoading(false);
+      }
+    };
+
+
 
   useEffect(() => {
     if (!userLoading && user && profile) {
       redirectToDashboard(profile);
+    }
+  }, [userLoading, user, profile, router]);
+
+  useEffect(() => {
+    if (awaitingProfile && profileReady && profile) {
+      // profileReady means useUser has populated the profile object
+      redirectToDashboard(profile);
+      setAwaitingProfile(false);
+    }
+    if (awaitingProfile && timedOut) {
+      // profile didn't populate in time
+      setAwaitingProfile(false);
+      toast({
+        variant: 'destructive',
+        title: 'Login Warning',
+        description: 'We signed you in but could not load your profile in time. If the app does not redirect, refresh the page or contact support.',
+      });
     }
   }, [userLoading, user, profile, router]);
   

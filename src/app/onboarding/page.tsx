@@ -34,28 +34,34 @@ export default function OnboardingPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   
-  useEffect(() => {
-    if (user && firestore) {
-      const checkOnboarding = async () => {
-        const userDocRef = doc(firestore, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists() && userDoc.data().techCareer) {
-          router.push('/dashboard');
+    useEffect(() => {
+        if (user && firestore) {
+            const checkOnboarding = async () => {
+                const userDocRef = doc(firestore, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists() && userDoc.data().techCareer) {
+                    router.push('/dashboard');
+                }
+            };
+            checkOnboarding();
         }
-      };
-      checkOnboarding();
+    }, [user, firestore, router]);
+
+    // Redirect unauthenticated users to login after hooks are initialized
+    useEffect(() => {
+        if (!user && !userLoading) {
+            router.push('/login');
+        }
+    }, [user, userLoading, router]);
+
+
+    if (userLoading) {
+        return <div className='flex items-center justify-center h-screen'><Loader2 className="h-8 w-8 animate-spin" /></div>;
     }
-  }, [user, firestore, router]);
 
-
-  if (userLoading) {
-    return <div className='flex items-center justify-center h-screen'><Loader2 className="h-8 w-8 animate-spin" /></div>;
-  }
-
-  if (!user) {
-    router.push('/login');
-    return null;
-  }
+    if (!user) {
+        return null;
+    }
   
   const handleOnboardingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,11 +94,21 @@ export default function OnboardingPage() {
     } catch (error) {
         const appError = handleError(error);
         logError(appError);
-        toast({
-            variant: 'destructive',
-            title: appError.title,
-            description: appError.message,
-        });
+
+        // Provide a slightly more actionable message for permission issues
+        if (appError.code === 'firestore/permission-denied') {
+            toast({
+                variant: 'destructive',
+                title: 'Permission Denied',
+                description: 'We could not save your profile. Please sign out and sign in again, or contact support if the problem persists.',
+            });
+        } else {
+            toast({
+                variant: 'destructive',
+                title: appError.title,
+                description: appError.message,
+            });
+        }
     } finally {
         setLoading(false);
     }
