@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 
 export default function CourseDetailPage() {
   const params = useParams();
-  const courseId = params?.courseId ?? null;
+  const rawId = params?.courseId;
+  const courseId = Array.isArray(rawId) ? rawId[0] : rawId ?? null;
   const { course, tasks, loading } = useCourse(courseId);
 
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div>;
