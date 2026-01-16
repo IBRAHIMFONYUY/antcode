@@ -58,11 +58,22 @@ export default function CourseDetailPage() {
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">{course.title}</h1>
         <p className="text-muted-foreground">{course.description}</p>
-        <div className="mt-3">
-          {enrolled === null ? null : enrolled ? (
-            <span className="inline-block rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">Enrolled</span>
+        <div className="mt-4 flex items-center gap-3">
+          {enrolled === null ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading enrollment status...
+            </div>
+          ) : enrolled ? (
+            <div className="flex items-center gap-2">
+              <span className="inline-block rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-800">✓ Enrolled</span>
+              <p className="text-sm text-muted-foreground">You can now submit tasks for this course</p>
+            </div>
           ) : (
-            <Button onClick={handleEnroll}>Enroll in course</Button>
+            <div className="flex flex-col gap-2">
+              <Button onClick={handleEnroll} size="lg">Enroll in Course</Button>
+              <p className="text-xs text-muted-foreground">Enroll to submit tasks and track progress</p>
+            </div>
           )}
         </div>
       </div>

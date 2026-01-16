@@ -4,9 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useMentor } from '@/hooks/use-mentor';
 import { Loader2 } from 'lucide-react';
-import { MentorDashboardSidebar } from './mentor-sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { DashboardHeader } from '@/components/dashboard/header';
 import { useToast } from '@/hooks/use-toast';
 import { useQuestions } from '@/hooks/use-questions';
 import { useSubmissions } from '@/hooks/use-submissions';
@@ -65,20 +62,6 @@ export function MentorDashboardLayout({ children }: { children: React.ReactNode 
     return null;
   }
 
-  return (
-    <div className="dark bg-background text-foreground min-h-screen">
-      <SidebarProvider>
-        <div className="flex h-screen">
-          <MentorDashboardSidebar />
-          <div className="flex flex-1 flex-col overflow-hidden">
-            <DashboardHeader />
-            <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-              {children}
-            </main>
-          </div>
-        </div>
-      </SidebarProvider>
-    </div>
-  );
+  return <>{children}</>;
 }
 
