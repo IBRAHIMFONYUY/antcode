@@ -26,13 +26,26 @@ export default function CourseDetailPage() {
   const [enrolled, setEnrolled] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (!db || !courseId) return;
+    if (!db || !courseId || !user) {
+      console.log('[CourseDetailPage] Skipping enrollment check:', { db: !!db, courseId, userId: user?.uid });
+      setEnrolled(false);
+      return;
+    }
+    
     const check = async () => {
       try {
-        const q = query(collection(db, 'enrollments'), where('courseId', '==', courseId));
+        console.log('[CourseDetailPage] Checking enrollment for:', { courseId, studentId: user.uid });
+        const q = query(
+          collection(db, 'enrollments'),
+          where('courseId', '==', courseId),
+          where('studentId', '==', user.uid)
+        );
         const snap = await getDocs(q);
-        setEnrolled(!!(snap.docs.length && user && snap.docs.some(d => (d.data() as any).studentId === user.uid)));
+        const isEnrolled = snap.docs.length > 0;
+        console.log('[CourseDetailPage] Enrollment result:', { isEnrolled, docsCount: snap.docs.length });
+        setEnrolled(isEnrolled);
       } catch (err) {
+        console.error('[CourseDetailPage] Enrollment check error:', err);
         setEnrolled(false);
       }
     };
@@ -40,9 +53,14 @@ export default function CourseDetailPage() {
   }, [db, courseId, user]);
 
   const handleEnroll = async () => {
-    if (!db || !user || !courseId) return;
+    if (!db || !user || !courseId) {
+      console.error('[CourseDetailPage] Missing required data for enrollment');
+      return;
+    }
     try {
       const id = `${user.uid}_${courseId}`;
+      console.log('[CourseDetailPage] Creating enrollment:', { enrollmentId: id, courseId, studentId: user.uid });
+      
       await setDoc(doc(db, 'enrollments', id), {
         id,
         courseId,
@@ -50,9 +68,14 @@ export default function CourseDetailPage() {
         studentName: user.displayName || user.email || 'Student',
         createdAt: serverTimestamp(),
       });
+      
+      console.log('[CourseDetailPage] Enrollment created successfully');
       setEnrolled(true);
+      
+      // Show toast notification
+      const { toast } = await import('@/hooks/use-toast').then(m => ({ toast: m.useToast().toast }));
     } catch (err) {
-      console.error('Enroll error', err);
+      console.error('[CourseDetailPage] Enroll error:', err);
     }
   };
 
