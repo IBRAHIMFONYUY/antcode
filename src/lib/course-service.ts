@@ -34,7 +34,8 @@ export async function getCourseById(db: Firestore, courseId: string): Promise<Co
 
 export async function getTasksForCourse(db: Firestore, courseId: string): Promise<StudentTask[]> {
   const col = collection(db, 'tasks');
-  const q = query(col, where('courseId', '==', courseId), orderBy('createdAt', 'desc'));
+  // Simple query without orderBy to avoid requiring composite index
+  const q = query(col, where('courseId', '==', courseId));
   const snap = await getDocs(q);
   return snap.docs.map(d => ({ id: d.id, ...(d.data() as any) } as StudentTask));
 }
