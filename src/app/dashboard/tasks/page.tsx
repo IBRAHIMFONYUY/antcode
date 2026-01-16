@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import Link from "next/link";
 import { useUser } from '@/firebase';
 import { useFirestore } from '@/firebase';
-import { collection, query, where, onSnapshot, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -50,7 +50,15 @@ export default function TasksPage() {
           const submissions = snapshot.docs.map(doc => ({
             ...doc.data(),
             id: doc.id,
-          }));
+          })) as Array<{
+            id: string;
+            taskId: string;
+            courseId: string;
+            studentId: string;
+            status?: string;
+            submittedAt?: any;
+            feedback?: string;
+          }>;
 
           // Enrich with course and task details
           const enrichedTasks: StudentTask[] = [];
@@ -71,7 +79,7 @@ export default function TasksPage() {
                 taskId: sub.taskId,
                 courseId: sub.courseId,
                 studentId: sub.studentId,
-                status: sub.status || 'pending',
+                status: (sub.status || 'pending') as 'pending' | 'submitted' | 'reviewed',
                 submittedAt: sub.submittedAt ? new Date(sub.submittedAt.seconds * 1000) : undefined,
                 feedback: sub.feedback,
                 title: taskTitle,

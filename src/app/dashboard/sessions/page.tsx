@@ -14,6 +14,14 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 
+interface Booking {
+  id: string;
+  mentorId: string;
+  startTime: { seconds: number };
+  status: 'upcoming' | 'completed' | 'cancelled';
+  duration?: number;
+}
+
 interface Session {
   id: string;
   mentor: {
@@ -51,7 +59,7 @@ export default function SessionsPage() {
           const bookings = snapshot.docs.map(doc => ({
             ...doc.data(),
             id: doc.id,
-          }));
+          })) as Booking[];
 
           // Enrich with mentor details
           const enrichedSessions: Session[] = [];
