@@ -14,6 +14,12 @@ export default function CourseDetailPage() {
   const params = useParams();
   const rawId = params?.courseId;
   const courseId = Array.isArray(rawId) ? rawId[0] : rawId ?? null;
+  
+  // Debug logging
+  console.log('[CourseDetailPage] params:', params);
+  console.log('[CourseDetailPage] rawId:', rawId);
+  console.log('[CourseDetailPage] courseId:', courseId);
+  
   const { course, tasks, loading } = useCourse(courseId);
   const db = useFirestore();
   const { user } = useUser();

@@ -29,14 +29,22 @@ export function useCourse(courseId: string | null) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!db || !courseId) return;
+    if (!db || !courseId) {
+      console.log('[useCourse] Missing db or courseId:', { db: !!db, courseId });
+      return;
+    }
+    
     setLoading(true);
+    console.log('[useCourse] Loading course:', courseId);
+    
     Promise.all([getCourseById(db, courseId), getTasksForCourse(db, courseId)])
       .then(([c, t]) => {
+        console.log('[useCourse] Data loaded:', { course: c?.id, tasksCount: t.length });
         setCourse(c);
         setTasks(t);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('[useCourse] Error loading:', err);
         setCourse(null);
         setTasks([]);
       })

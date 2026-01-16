@@ -9,10 +9,27 @@ export async function getAllCourses(db: Firestore): Promise<Course[]> {
 }
 
 export async function getCourseById(db: Firestore, courseId: string): Promise<Course | null> {
-  const ref = doc(db, 'courses', courseId);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) return null;
-  return { id: snap.id, ...(snap.data() as any) } as Course;
+  if (!courseId || courseId === 'undefined') {
+    console.error('[getCourseById] Invalid courseId:', courseId);
+    return null;
+  }
+  
+  try {
+    const ref = doc(db, 'courses', courseId);
+    const snap = await getDoc(ref);
+    
+    if (!snap.exists()) {
+      console.error('[getCourseById] Course not found in Firestore:', courseId);
+      return null;
+    }
+    
+    const course = { id: snap.id, ...(snap.data() as any) } as Course;
+    console.log('[getCourseById] Course found:', course);
+    return course;
+  } catch (err) {
+    console.error('[getCourseById] Error:', err, 'courseId:', courseId);
+    return null;
+  }
 }
 
 export async function getTasksForCourse(db: Firestore, courseId: string): Promise<StudentTask[]> {
