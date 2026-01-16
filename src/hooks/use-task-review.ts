@@ -56,6 +56,7 @@ export function useTaskReview() {
 
   /**
    * Get task submissions for a mentor to review
+   * Only shows submissions for tasks in the mentor's courses
    */
   const getMentorReviewQueue = useCallback(
     async (mentorId: string): Promise<TaskSubmission[]> => {
@@ -68,22 +69,72 @@ export function useTaskReview() {
       setError(null);
 
       try {
-        // For now, get all pending submissions
-        // In a real app, this would be based on course assignments
-        const q = query(
+        // Step 1: Get all courses owned by this mentor
+        const coursesQuery = query(
+          collection(firestore, 'courses'),
+          where('ownerId', '==', mentorId)
+        );
+        const coursesSnapshot = await getDocs(coursesQuery);
+        const courseIds = coursesSnapshot.docs.map(doc => doc.id);
+
+        if (courseIds.length === 0) {
+          console.log('[getMentorReviewQueue] Mentor has no courses');
+          return [];
+        }
+
+        console.log('[getMentorReviewQueue] Found courses:', courseIds);
+
+        // Step 2: Get all submitted tasks for those courses
+        const tasksQuery = query(
+          collection(firestore, 'tasks'),
+          where('courseId', 'in', courseIds)
+        );
+        const tasksSnapshot = await getDocs(tasksQuery);
+        const taskIds = tasksSnapshot.docs.map(doc => doc.id);
+
+        if (taskIds.length === 0) {
+          console.log('[getMentorReviewQueue] No tasks in mentor courses');
+          return [];
+        }
+
+        console.log('[getMentorReviewQueue] Found tasks:', taskIds);
+
+        // Step 3: Get all submissions for those tasks with 'submitted' status
+        const submissionsQuery = query(
           collection(firestore, 'taskSubmissions'),
           where('status', '==', 'submitted')
         );
-        const snapshot = await getDocs(q);
+        const submissionsSnapshot = await getDocs(submissionsQuery);
 
-        return snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        } as TaskSubmission));
+        // Filter submissions to only those for the mentor's tasks
+        const mentorSubmissions = submissionsSnapshot.docs
+          .filter(doc => taskIds.includes(doc.data().taskId))
+          .map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              taskId: data.taskId,
+              courseId: data.courseId,
+              studentId: data.studentId,
+              studentName: data.studentName || 'Unknown',
+              code: data.code,
+              notes: data.notes,
+              submittedAt: data.submittedAt,
+              status: data.status,
+              // For backward compatibility with old field names
+              submissionText: data.code,
+              submissionCode: data.code,
+              studentEmail: data.studentEmail || '',
+            } as TaskSubmission;
+          });
+
+        console.log('[getMentorReviewQueue] Found submissions:', mentorSubmissions.length);
+        return mentorSubmissions;
       } catch (err) {
         const appError = handleError(err);
         logError(appError);
         setError(appError.message);
+        console.error('[getMentorReviewQueue] Error:', err);
         return [];
       } finally {
         setLoading(false);

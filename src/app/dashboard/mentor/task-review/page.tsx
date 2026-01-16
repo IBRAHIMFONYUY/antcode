@@ -33,17 +33,27 @@ export default function MentorTaskReviewPage() {
 
   useEffect(() => {
     if (!mentorLoading && user) {
+      console.log('[TaskReviewPage] Loading review queue for mentor:', user.uid);
       loadReviewQueue();
     }
   }, [mentorLoading, user]);
 
   const loadReviewQueue = async () => {
     try {
-      if (!user) return;
+      if (!user) {
+        console.error('[TaskReviewPage] No user available');
+        return;
+      }
+      console.log('[TaskReviewPage] Calling getMentorReviewQueue...');
       const pendingSubmissions = await getMentorReviewQueue(user.uid);
+      console.log('[TaskReviewPage] Received submissions:', pendingSubmissions.length);
       setSubmissions(pendingSubmissions);
+      if (pendingSubmissions.length === 0) {
+        setError('No submissions to review');
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load submissions';
+      console.error('[TaskReviewPage] Error loading submissions:', err);
       setError(message);
     }
   };
