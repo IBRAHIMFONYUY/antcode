@@ -211,10 +211,10 @@ service cloud.firestore {
       let data = request.resource.data;
       return data.size() > 0 &&
         'mentorId' in data && data.mentorId is string &&
-        'studentId' in data && data.studentId == request.auth.uid &&
+        'studentId' in data && data.studentId is string &&
         'startTime' in data &&
         'duration' in data && data.duration is number && data.duration > 0 &&
-        'status' in data && data.status == 'pending' &&
+        'status' in data && data.status in ['pending', 'confirmed', 'upcoming', 'completed', 'cancelled'] &&
         'createdAt' in data;
     }
 

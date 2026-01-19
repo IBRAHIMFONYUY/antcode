@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Loader2, X, MessageCircle, AlertCircle } from 'lucide-react';
+import { Loader2, X, Phone, MessageCircle, AlertCircle } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { useBookings } from '@/hooks/use-bookings';
@@ -73,19 +73,29 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
   const step1Valid = selectedDate && selectedTime && duration;
   const step2Valid = goal.trim().length >= 20;
 
-  const whatsAppNumber = '237677020718';
+  const whatsAppNumber = '+237677020718';
+  const ussdCode = `*126*9*677020718*${totalPrice.toFixed(0)}#`;
+  const telLink = `tel:${ussdCode.replace(/#/g, '%23')}`;
+  
   const whatsAppMessage = encodeURIComponent(
-    `Hello, I have made a booking for a session with ${expert.name}.\n\n` +
-      `Booking Details:\n` +
-      `-------------------\n` +
-      `Mentor: ${expert.name}\n` +
-      `Date: ${selectedDate}\n` +
-      `Time: ${selectedTime}\n` +
-      `Duration: ${duration} min\n` +
-      `Goal: ${goal}\n` +
-      `Experience Level: ${experience}\n` +
-      `Amount to Pay: $${totalPrice.toFixed(2)}\n\n` +
-      `Please contact me to arrange payment and confirm the session. Thank you!`
+    `Subject: Booking Confirmation and Payment Arrangement for Mentorship Session\n\n` +
+      `Hello,\n\n` +
+      `I hope this message finds you well.\n\n` +
+      `I am writing to formally confirm that I have successfully made a booking for a mentorship session with ${expert.name}. Below are the details of the booking for your reference:\n\n` +
+      `📋 BOOKING DETAILS\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+      `• Mentor: ${expert.name}\n` +
+      `• Date: ${selectedDate}\n` +
+      `• Time: ${selectedTime}\n` +
+      `• Duration: ${duration} minutes\n` +
+      `• Goal: ${goal}\n` +
+      `• Experience Level: ${experience}\n` +
+      `• Session Fee: $${totalPrice.toFixed(2)}\n\n` +
+     
+      `I have completed the payment of $${totalPrice.toFixed(2)} via the USSD code ${ussdCode}. Please find the payment confirmation attached to this message.\n\n` +
+      `I am highly interested in this session and look forward to our collaboration. Kindly contact me at your earliest convenience to confirm the session details and to ensure all arrangements are in place.\n\n` +
+      `Thank you very much for your time and support. I look forward to your response and to the upcoming session.\n\n` +
+      `Best regards`
   );
   const whatsAppLink = `https://wa.me/${whatsAppNumber}?text=${whatsAppMessage}`;
 
@@ -149,17 +159,12 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
 
       onBookingSuccess?.(bookingId);
 
-      // Redirect to WhatsApp immediately
-      window.open(whatsAppLink, '_blank');
-      
-      // Close the dialog
-      setTimeout(() => {
-        handleOpenChange(false);
-      }, 500);
+      // Show success screen (Step 4)
+      setStep(4);
 
       toast({
         title: 'Success',
-        description: 'Booking confirmed! Redirecting to WhatsApp...',
+        description: 'Booking confirmed! Now send the confirmation via WhatsApp.',
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'An error occurred while creating the booking. Please try again or check your internet connection.';
@@ -376,19 +381,44 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
               {step === 3 && (
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr]">
                   <div className="space-y-6">
-                    <h3 className="font-medium text-lg">Complete Your Booking</h3>
+                    <h3 className="font-medium text-lg">Payment Procedure</h3>
 
                     <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
                       <AccordionItem value="item-1">
-                        <AccordionTrigger>Payment Instructions</AccordionTrigger>
+                        <AccordionTrigger>Step 1: Make Payment</AccordionTrigger>
                         <AccordionContent className="space-y-4">
                           <p className="text-muted-foreground">
-                            Once you click "Confirm & Open WhatsApp", you'll be taken to WhatsApp to contact the mentor and arrange payment.
+                            Dial the code below on your mobile phone to pay for the session.
                           </p>
                           <div className="flex items-center gap-3 rounded-lg border bg-secondary p-3">
-                            <span className="text-sm text-muted-foreground font-medium">Amount to Pay:</span>
-                            <code className="font-mono text-base font-semibold">${totalPrice.toFixed(2)}</code>
+                            <code className="font-mono text-base font-semibold">{ussdCode}</code>
+                            <a href={telLink} className="ml-auto">
+                              <Button size="sm">
+                                <Phone className="mr-2 h-4 w-4" />
+                                Dial Now
+                              </Button>
+                            </a>
                           </div>
+                          <div className="space-y-2 p-3 rounded-lg border border-amber-200 bg-amber-50">
+                            <p className="text-sm font-medium text-amber-900">💳 Account Details:</p>
+                            <p className="text-sm text-amber-800">
+                              <strong>Name:</strong> SHAIDU HABILU TOMNYUY<br/>
+                              <strong>Phone:</strong> {whatsAppNumber}
+                            </p>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                      <AccordionItem value="item-2">
+                        <AccordionTrigger>Step 2: After Payment</AccordionTrigger>
+                        <AccordionContent className="space-y-4">
+                          <p className="text-muted-foreground">
+                            After completing the payment:
+                          </p>
+                          <ul className="space-y-2 text-sm text-muted-foreground list-disc pl-5">
+                            <li>Take a screenshot of the payment confirmation</li>
+                            <li>Click "Next" below to proceed</li>
+                            <li>Send the confirmation message via WhatsApp with your payment screenshot</li>
+                          </ul>
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
@@ -430,6 +460,30 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
                   </div>
                 </div>
               )}
+
+              {/* SUCCESS */}
+              {step === 4 && (
+                <div className="flex h-full flex-col items-center justify-center text-center p-4">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                    <svg className="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h2 className="text-2xl font-semibold">Session Booked Successfully!</h2>
+                  <p className="mt-2 text-muted-foreground max-w-sm">
+                    Your booking is confirmed. Now send the payment confirmation and booking details via WhatsApp to complete the arrangement.
+                  </p>
+                  
+                  <Button 
+                    className='w-full max-w-xs mt-6'
+                    onClick={() => window.open(whatsAppLink, '_blank')}
+                  >
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Send Confirmation via WhatsApp
+                  </Button>
+                  <Button variant="ghost" onClick={() => handleOpenChange(false)} className='mt-2'>Done</Button>
+                </div>
+              )}
             </main>
 
             {/* FOOTER */}
@@ -454,13 +508,10 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
                     {loading || bookingLoading ? (
                       <>
                         <Loader2 className="animate-spin mr-2" />
-                        Processing...
+                        Confirming...
                       </>
                     ) : (
-                      <>
-                        <MessageCircle className="mr-2 h-4 w-4" />
-                        Confirm & Open WhatsApp
-                      </>
+                      "Next"
                     )}
                   </Button>
                 ) : (
