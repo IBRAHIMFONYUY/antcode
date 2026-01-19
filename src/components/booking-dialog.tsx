@@ -74,7 +74,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
   const step2Valid = goal.trim().length >= 20;
 
   const whatsAppNumber = '+237677020718';
-  const ussdCode = `*126*9*677020718*${(totalPrice + (totalPrice * 0.1)).toFixed(0)}#`;
+  const ussdCode = `*126*9*677020718*${totalPrice.toFixed(0)}#`;
   const telLink = `tel:${ussdCode.replace(/#/g, '%23')}`;
   
   const whatsAppMessage = encodeURIComponent(
@@ -458,7 +458,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
                     <Separator />
                     <p className="flex justify-between items-baseline font-semibold">
                       <span>Total (In XAF):</span>
-                      <span className="text-xl text-primary">{(totalPrice + (totalPrice * 0.1)).toFixed(2)}XAF</span>
+                      <span className="text-xl text-primary">{totalPrice.toFixed(2)}XAF</span>
                     </p>
                   </div>
                 </div>
