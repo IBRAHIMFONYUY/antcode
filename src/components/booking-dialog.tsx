@@ -393,9 +393,12 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
                           <div className="flex items-center gap-3 rounded-lg border bg-secondary p-3">
                             <code className="font-mono text-base font-semibold">{ussdCode}</code>
                             <a href={telLink} className="ml-auto">
-                              <Button size="sm">
+                              <Button 
+                                className='w-full max-w-xs mt-6'
+                                onClick={() => window.open(telLink, '_blank')}
+                              >
                                 <Phone className="mr-2 h-4 w-4" />
-                                Dial Now
+                                Dial
                               </Button>
                             </a>
                           </div>
