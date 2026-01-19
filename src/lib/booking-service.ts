@@ -118,7 +118,7 @@ export function validateBookingData(data: Partial<Booking>): {
 export function calculateTotalPriceInXAF(
   basePriceUSD: number,
   feePercentage: number = 10,
-  usdToXafRate: number = 600 // example rate
+  usdToXafRate: number = 550 // example rate
 ): number {
   const feeUSD = (basePriceUSD * feePercentage) / 100;
   const totalUSD = basePriceUSD + feeUSD;
