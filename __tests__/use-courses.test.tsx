@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 import { useCourses } from '@/hooks/use-courses';
 
 // Note: These tests assume a test environment with Firestore mocks available.
