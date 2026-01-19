@@ -23,7 +23,7 @@ import { useBookings } from '@/hooks/use-bookings';
 import { useExpertAvailability } from '@/hooks/use-expert-availability';
 import { useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { calculateTotalPrice, validateBookingData, formatDuration } from '@/lib/booking-service';
+import { calculateTotalPriceInXAF, validateBookingData, formatDuration } from '@/lib/booking-service';
 import { Alert, AlertDescription } from './ui/alert';
 
 const DURATIONS = [
@@ -67,7 +67,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
   }, [duration]);
 
   const totalPrice = useMemo(() => {
-    return calculateTotalPrice(price);
+    return calculateTotalPriceInXAF(price);
   }, [price]);
 
   const step1Valid = selectedDate && selectedTime && duration;

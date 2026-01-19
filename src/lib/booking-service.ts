@@ -115,9 +115,15 @@ export function validateBookingData(data: Partial<Booking>): {
 /**
  * Calculate total price including any applicable fees
  */
-export function calculateTotalPrice(basePrice: number, feePercentage: number = 10): number {
-  const fee = (basePrice * feePercentage) / 100;
-  return basePrice + fee;
+export function calculateTotalPriceInXAF(
+  basePriceUSD: number,
+  feePercentage: number = 10,
+  usdToXafRate: number = 600 // example rate
+): number {
+  const feeUSD = (basePriceUSD * feePercentage) / 100;
+  const totalUSD = basePriceUSD + feeUSD;
+
+  return totalUSD * usdToXafRate;
 }
 
 /**
