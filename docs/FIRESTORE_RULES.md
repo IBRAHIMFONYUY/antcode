@@ -100,11 +100,9 @@ service cloud.firestore {
     // ============================================
     // BOOKINGS COLLECTION
     // ============================================
-    // Students book sessions with mentors, both can read/update
+    // Anyone (authenticated or guest) can create bookings, mentors can read/update own
     match /bookings/{bookingId} {
-      allow create: if request.auth != null && 
-        request.auth.uid == request.resource.data.studentId &&
-        isValidBooking();
+      allow create: if isValidBooking();
       
       allow read: if request.auth != null && (
         request.auth.uid == resource.data.studentId ||

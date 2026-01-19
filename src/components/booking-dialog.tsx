@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Loader2, X, Phone, Upload, CheckCircle2, MessageCircle, AlertCircle } from 'lucide-react';
+import { Loader2, X, MessageCircle, AlertCircle } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { useBookings } from '@/hooks/use-bookings';
@@ -58,8 +58,6 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
   const [experience, setExperience] = useState<string | null>(null);
 
   // Step 3
-  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
-  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -75,12 +73,9 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
   const step1Valid = selectedDate && selectedTime && duration;
   const step2Valid = goal.trim().length >= 20;
 
-  const ussdCode = `*126*9*677020718*${totalPrice.toFixed(0)}#`;
-  const telLink = `tel:${ussdCode.replace(/#/g, '%23')}`;
-
   const whatsAppNumber = '237677020718';
   const whatsAppMessage = encodeURIComponent(
-    `Hello, I have made a payment of $${totalPrice.toFixed(2)} for a session with ${expert.name}.\n\n` +
+    `Hello, I have made a booking for a session with ${expert.name}.\n\n` +
       `Booking Details:\n` +
       `-------------------\n` +
       `Mentor: ${expert.name}\n` +
@@ -88,8 +83,9 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
       `Time: ${selectedTime}\n` +
       `Duration: ${duration} min\n` +
       `Goal: ${goal}\n` +
-      `Experience Level: ${experience}\n\n` +
-      `Please find the screenshot attached for verification. Thank you!`
+      `Experience Level: ${experience}\n` +
+      `Amount to Pay: $${totalPrice.toFixed(2)}\n\n` +
+      `Please contact me to arrange payment and confirm the session. Thank you!`
   );
   const whatsAppLink = `https://wa.me/${whatsAppNumber}?text=${whatsAppMessage}`;
 
@@ -109,41 +105,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
     }
   }, [selectedDate]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setErrorMessage('File size must be less than 5MB');
-        return;
-      }
-      setScreenshotFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setScreenshotPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-      setErrorMessage(null);
-    } else {
-      setScreenshotFile(null);
-      setScreenshotPreview(null);
-    }
-  };
-
-  const [guestName, setGuestName] = useState('');
-  const [guestEmail, setGuestEmail] = useState('');
-
-  const handlePaymentVerification = async () => {
-    // Allow guest bookings: collect guest name/email if user is not authenticated
-    if (!user && (!guestName.trim() || !guestEmail.trim())) {
-      toast({
-        variant: 'destructive',
-        title: 'Missing contact information',
-        description: 'Please provide your name and email to complete booking.',
-      });
-      return;
-    }
-
+  const handleCompleteBooking = async () => {
     setLoading(true);
     setErrorMessage(null);
 
@@ -155,8 +117,8 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
 
       const bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'> = {
         studentId: user?.uid ?? `guest_${Date.now()}`,
-        studentName: user?.displayName || guestName || 'Anonymous',
-        studentEmail: user?.email || guestEmail || '',
+        studentName: user?.displayName || 'Guest User',
+        studentEmail: user?.email || 'guest@booking.com',
         mentorId: expert.id,
         mentorName: expert.name,
         mentorImageUrl: expert.imageUrl,
@@ -166,7 +128,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
         totalPrice: totalPrice,
         topic: goal || 'Tutoring Session',
         goal: goal,
-        status: 'pending',
+        status: 'confirmed',
         notes: `Experience Level: ${experience}\nAdditional Notes: ${notes}`,
       };
 
@@ -181,20 +143,27 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
       const bookingId = await createBooking(bookingData);
 
       if (!bookingId) {
-        setErrorMessage('Failed to create booking. Please try again.');
+        setErrorMessage('Failed to create booking. Please check your connection and try again.');
         return;
       }
 
-      // Show success
-      setStep(4);
       onBookingSuccess?.(bookingId);
+
+      // Redirect to WhatsApp immediately
+      window.open(whatsAppLink, '_blank');
+      
+      // Close the dialog
+      setTimeout(() => {
+        handleOpenChange(false);
+      }, 500);
 
       toast({
         title: 'Success',
-        description: 'Booking created successfully! Please send proof of payment via WhatsApp.',
+        description: 'Booking confirmed! Redirecting to WhatsApp...',
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'An error occurred';
+      const message = error instanceof Error ? error.message : 'An error occurred while creating the booking. Please try again or check your internet connection.';
+      console.error('Booking error:', error);
       setErrorMessage(message);
       toast({
         variant: 'destructive',
@@ -216,8 +185,6 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
         setGoal('');
         setExperience(null);
         setNotes('');
-        setScreenshotFile(null);
-        setScreenshotPreview(null);
         setLoading(false);
         setErrorMessage(null);
       }, 300);
@@ -318,6 +285,7 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
                   <div className="lg:col-span-2">
                     <Label htmlFor="booking-time" className="font-medium">
                       Available Time *
+                      
                     </Label>
                     <div className="mt-2 max-h-[220px] overflow-y-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                       {availableSlots.length > 0 ? (
@@ -407,77 +375,19 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
               {/* STEP 3 */}
               {step === 3 && (
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr]">
-                  {/* If user is not authenticated, collect guest contact info */}
-                  {!user && (
-                    <div className="mx-auto max-w-2xl space-y-4 lg:col-span-1">
-                      <h3 className="font-medium text-lg">Your contact details</h3>
-                      <div>
-                        <Label htmlFor="guest-name">Full name</Label>
-                        <Input id="guest-name" value={guestName} onChange={(e) => setGuestName(e.target.value)} />
-                      </div>
-                      <div>
-                        <Label htmlFor="guest-email">Email</Label>
-                        <Input id="guest-email" type="email" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} />
-                      </div>
-                    </div>
-                  )}
                   <div className="space-y-6">
-                    <h3 className="font-medium text-lg">Payment Procedure</h3>
+                    <h3 className="font-medium text-lg">Complete Your Booking</h3>
 
                     <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
                       <AccordionItem value="item-1">
-                        <AccordionTrigger>Step 1: Make Payment</AccordionTrigger>
+                        <AccordionTrigger>Payment Instructions</AccordionTrigger>
                         <AccordionContent className="space-y-4">
                           <p className="text-muted-foreground">
-                            Dial the code below on your mobile phone to pay for the session.
+                            Once you click "Confirm & Open WhatsApp", you'll be taken to WhatsApp to contact the mentor and arrange payment.
                           </p>
                           <div className="flex items-center gap-3 rounded-lg border bg-secondary p-3">
-                            <code className="font-mono text-base font-semibold">{ussdCode}</code>
-                            <a href={telLink} className="ml-auto">
-                              <Button size="sm">
-                                <Phone className="mr-2 h-4 w-4" />
-                                Dial Now
-                              </Button>
-                            </a>
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                      <AccordionItem value="item-2">
-                        <AccordionTrigger>Step 2: Upload Proof of Payment</AccordionTrigger>
-                        <AccordionContent className="space-y-4">
-                          <p className="text-muted-foreground">
-                            After payment, take a screenshot of the confirmation message and upload it below.
-                          </p>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="screenshot-upload"
-                              className={cn(
-                                'flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50',
-                                screenshotPreview && 'border-primary'
-                              )}
-                            >
-                              {screenshotPreview ? (
-                                <div className="flex flex-col items-center justify-center text-center">
-                                  <CheckCircle2 className="h-8 w-8 text-green-500 mb-2" />
-                                  <p className="font-semibold text-sm">Image Selected!</p>
-                                  <p className="text-xs text-muted-foreground">{screenshotFile?.name}</p>
-                                </div>
-                              ) : (
-                                <div className="flex flex-col items-center justify-center">
-                                  <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                                  <p className="text-sm font-semibold">Click to upload screenshot</p>
-                                  <p className="text-xs text-muted-foreground">PNG, JPG, or GIF (Max 5MB)</p>
-                                </div>
-                              )}
-                            </Label>
-                            <Input
-                              id="screenshot-upload"
-                              type="file"
-                              className="sr-only"
-                              onChange={handleFileChange}
-                              accept="image/*"
-                            />
+                            <span className="text-sm text-muted-foreground font-medium">Amount to Pay:</span>
+                            <code className="font-mono text-base font-semibold">${totalPrice.toFixed(2)}</code>
                           </div>
                         </AccordionContent>
                       </AccordionItem>
@@ -520,28 +430,6 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
                   </div>
                 </div>
               )}
-
-              {/* SUCCESS */}
-              {step === 4 && (
-                <div className="flex h-full flex-col items-center justify-center text-center p-4">
-                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                    <svg className="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                   </div>
-                  <h2 className="text-2xl font-semibold">Session Booked Successfully!</h2>
-                  <p className="mt-2 text-muted-foreground max-w-sm">
-                    Your session is pending verification. To complete the process, please send your payment screenshot via WhatsApp for confirmation.
-                  </p>
-                  <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className='w-full max-w-xs mt-6'>
-                    <Button className='w-full'>
-                      <MessageCircle className="mr-2 h-4 w-4" />
-                      Send Proof via WhatsApp
-                    </Button>
-                  </a>
-                  <Button variant="ghost" onClick={() => handleOpenChange(false)} className='mt-2'>Done</Button>
-                </div>
-              )}
             </main>
 
             {/* FOOTER */}
@@ -560,16 +448,19 @@ export function BookingDialog({ expert, isOpen, onOpenChange, onBookingSuccess }
                 {step === 3 ? (
                   <Button
                     type="button"
-                    disabled={!screenshotFile || loading || bookingLoading}
-                    onClick={handlePaymentVerification}
+                    disabled={loading || bookingLoading}
+                    onClick={handleCompleteBooking}
                   >
                     {loading || bookingLoading ? (
                       <>
                         <Loader2 className="animate-spin mr-2" />
-                        Verifying...
+                        Processing...
                       </>
                     ) : (
-                      "I have paid, Verify & Complete"
+                      <>
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                        Confirm & Open WhatsApp
+                      </>
                     )}
                   </Button>
                 ) : (
