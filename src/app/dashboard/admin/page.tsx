@@ -42,11 +42,12 @@ export default function AdminPage() {
     doc.text("AntCodeHub User Report", 20, 10);
     
     autoTable(doc, {
-      head: [['Name', 'Email', 'Role', 'Joined']],
+      head: [['Name', 'Email', 'Role', 'Phone Number', 'Joined']],
       body: users.map(user => [
         user.displayName,
         user.email,
         user.role,
+        user.phoneNumber || 'N/A',
         user.createdAt ? formatTimestamp(user.createdAt) : 'N/A'
       ]),
     });
@@ -87,6 +88,7 @@ export default function AdminPage() {
                 <TableHead>Display Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Phone Number</TableHead>
                 <TableHead>Joined Date</TableHead>
               </TableRow>
             </TableHeader>
@@ -96,6 +98,7 @@ export default function AdminPage() {
                   <TableCell className="font-medium">{user.displayName}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
+                  <TableCell>{user.phoneNumber || 'N/A'}</TableCell>
                   <TableCell>{user.createdAt ? formatTimestamp(user.createdAt) : 'N/A'}</TableCell>
                 </TableRow>
               ))}
