@@ -26,6 +26,10 @@ export default function AdminPage() {
         const usersCollection = collection(firestore, 'users');
         const userSnapshot = await getDocs(usersCollection);
         const userList = userSnapshot.docs.map(doc => ({ ...doc.data(), uid: doc.id }) as UserProfile);
+        
+        // Sort users alphabetically by display name
+        userList.sort((a, b) => (a.displayName || '').localeCompare(b.displayName || ''));
+        
         setUsers(userList);
       } catch (error) {
         console.error("Error fetching users:", error);
