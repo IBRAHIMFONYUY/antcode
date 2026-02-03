@@ -11,7 +11,7 @@ export type UserProfile = {
   displayName: string;
   email: string;
   photoURL?: string;
-  role: 'student' | 'mentor';
+  role: 'student' | 'mentor' | 'admin';
   techCareer?: string;
   createdAt: Date | { seconds: number; nanoseconds: number };
   updatedAt?: Date | { seconds: number; nanoseconds: number };
