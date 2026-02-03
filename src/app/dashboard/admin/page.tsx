@@ -25,7 +25,7 @@ export default function AdminPage() {
         setLoading(true);
         const usersCollection = collection(firestore, 'users');
         const userSnapshot = await getDocs(usersCollection);
-        const userList = userSnapshot.docs.map(doc => doc.data() as UserProfile);
+        const userList = userSnapshot.docs.map(doc => ({ ...doc.data(), uid: doc.id }) as UserProfile);
         setUsers(userList);
       } catch (error) {
         console.error("Error fetching users:", error);
