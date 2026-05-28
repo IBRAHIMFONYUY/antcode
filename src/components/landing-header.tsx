@@ -80,17 +80,17 @@ export function LandingHeader() {
   
   if (isMobile) {
     return (
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-between">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-gradient-to-r from-white to-blue-50 dark:from-slate-950 dark:to-slate-900 backdrop-blur supports-[backdrop-filter]:bg-white/95 dark:supports-[backdrop-filter]:bg-slate-950/95 shadow-sm">
+        <div className="container flex h-16 items-center justify-between">
           <Logo />
            <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-white dark:bg-slate-950">
               <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
               <div className="p-4">
                 <div className="mb-8">
@@ -102,7 +102,7 @@ export function LandingHeader() {
                       <Link
                         href={link.href}
                         className={cn(
-                          'text-lg font-medium transition-colors hover:text-primary',
+                          'text-lg font-semibold transition-colors hover:text-primary',
                           pathname === link.href ? 'text-primary' : 'text-foreground'
                         )}
                       >
@@ -113,12 +113,12 @@ export function LandingHeader() {
                 </nav>
                 <div className="mt-8 flex flex-col space-y-4">
                   <SheetClose asChild>
-                    <Button variant="outline" asChild>
+                    <Button variant="outline" asChild className="border-primary/30 text-primary hover:bg-primary/5">
                         <Link href="/login">Login</Link>
                     </Button>
                   </SheetClose>
                   <SheetClose asChild>
-                    <Button asChild>
+                    <Button asChild className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white">
                         <Link href="/signup">Get Started</Link>
                     </Button>
                   </SheetClose>
@@ -127,7 +127,7 @@ export function LandingHeader() {
             </SheetContent>
           </Sheet>
         </div>
-        {loading && <div ref={loadingBarRef} className="absolute bottom-0 h-0.5 bg-primary" />}
+        {loading && <div ref={loadingBarRef} className="absolute bottom-0 h-1 bg-gradient-to-r from-primary to-secondary" />}
       </header>
     );
   }
@@ -137,7 +137,7 @@ export function LandingHeader() {
       <div 
         ref={headerContainerRef}
         className={cn(
-            "relative container flex h-16 items-center rounded-full border border-primary/20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-[max-width,padding] duration-1000 ease-in-out",
+            "relative container flex h-16 items-center rounded-full border border-primary/30 bg-white/80 dark:bg-slate-950/80 backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-slate-950/70 transition-[max-width,padding] duration-1000 ease-in-out shadow-lg hover:shadow-xl",
             isHovered ? "max-w-6xl justify-between px-6" : "max-w-min justify-center px-4"
         )}
         onMouseEnter={() => setIsHovered(true)}
@@ -145,7 +145,7 @@ export function LandingHeader() {
       >
         <div className={cn(
             "absolute inset-0 rounded-full border-2 border-transparent transition-all duration-300 ease-in-out pointer-events-none",
-            isHovered ? "border-primary/50 shadow-[0_0_20px_3px_hsl(var(--primary)/0.4)]" : "shadow-[0_0_15px_2px_hsl(var(--primary)/0.2)]"
+            isHovered ? "border-primary/40 shadow-[0_0_30px_5px_hsl(var(--primary)/0.25)]" : "shadow-[0_0_20px_3px_hsl(var(--primary)/0.15)]"
         )} />
 
         <div className={cn(
@@ -154,16 +154,16 @@ export function LandingHeader() {
         )}>
             <Logo />
             <nav className={cn(
-                "flex items-center space-x-6 text-sm font-medium transition-opacity duration-500",
-                isHovered ? "ml-10 opacity-100 delay-500" : "w-0 opacity-0"
+                "flex items-center space-x-8 text-sm font-semibold transition-opacity duration-500",
+                isHovered ? "ml-12 opacity-100 delay-500" : "w-0 opacity-0"
             )}>
             {navLinks.map((link) => (
                 <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                    'transition-colors hover:text-primary whitespace-nowrap',
-                    pathname === link.href ? 'text-primary' : 'text-foreground/60'
+                    'transition-all duration-200 hover:text-primary hover:scale-105 whitespace-nowrap',
+                    pathname === link.href ? 'text-primary font-bold' : 'text-foreground/70'
                 )}
                 >
                 {link.label}
@@ -175,15 +175,22 @@ export function LandingHeader() {
             "flex items-center space-x-4 transition-opacity duration-500 z-10", 
             isHovered ? "opacity-100 delay-500" : "w-0 opacity-0 pointer-events-none"
         )}>
-          <Button variant="ghost" asChild>
+          <Button 
+            variant="ghost" 
+            asChild
+            className="text-foreground hover:text-primary font-semibold"
+          >
             <Link href="/login">Login</Link>
           </Button>
-          <Button asChild>
+          <Button 
+            asChild
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+          >
             <Link href="/signup">Get Started</Link>
           </Button>
         </div>
       </div>
-      {loading && <div ref={loadingBarRef} className="absolute bottom-0 h-0.5 bg-primary" />}
+      {loading && <div ref={loadingBarRef} className="absolute bottom-0 h-1 bg-gradient-to-r from-primary to-secondary" />}
     </header>
   );
 }

@@ -97,52 +97,58 @@ export function BookingDialog({ expert, isOpen, onOpenChange }: BookingDialogPro
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogPortal>
-        <DialogOverlay />
-        <DialogContent className="w-[95vw] max-w-4xl p-0 h-[90vh] max-h-[680px]">
-          <form className="flex h-full flex-col overflow-hidden">
+        <DialogOverlay className="bg-black/40 backdrop-blur-sm" />
+        <DialogContent className="w-[95vw] max-w-4xl p-0 h-[90vh] max-h-[680px] rounded-2xl shadow-2xl">
+          <form className="flex h-full flex-col overflow-hidden bg-gradient-to-br from-white to-blue-50 dark:from-slate-950 dark:to-slate-900">
             {/* HEADER */}
-            <header className="sticky top-0 z-10 border-b bg-background px-6 py-4">
+            <header className="sticky top-0 z-10 border-b border-border/40 bg-gradient-to-r from-white to-blue-50 dark:from-slate-950 dark:to-slate-900 px-6 py-6">
               <div className="flex items-start justify-between">
                 <DialogTitle className='sr-only'>Book a session with {expert.name}</DialogTitle>
                  <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-14 w-14 border-2 border-primary/30">
                     <AvatarImage src={expert.imageUrl} alt={expert.name} />
                     <AvatarFallback>{expert.name.slice(0, 2).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h2 className="font-semibold text-lg">{expert.name}</h2>
-                    <p className="text-sm text-muted-foreground">{expert.role}</p>
+                    <h2 className="font-headline font-semibold text-lg text-foreground">{expert.name}</h2>
+                    <p className="text-sm font-medium text-primary">{expert.role}</p>
                   </div>
                 </div>
                 <DialogClose asChild>
-                  <Button variant="ghost" size="icon" className="shrink-0">
+                  <Button variant="ghost" size="icon" className="shrink-0 hover:bg-primary/10 hover:text-primary">
                     <X className="h-5 w-5" />
                     <span className="sr-only">Close</span>
                   </Button>
                 </DialogClose>
               </div>
-              <div className="mt-4 flex items-center gap-2">
-                <p className="text-sm text-muted-foreground">
+              <div className="mt-5 flex items-center gap-3">
+                <p className="text-sm font-semibold text-muted-foreground">
                   Step {step <= 3 ? step : 3} of 3
                 </p>
-                <div className="flex gap-1.5">
+                <div className="flex gap-2">
                   {[1,2,3].map(s => (
-                    <div key={s} className={cn("h-1 w-12 rounded-full", step >= s ? 'bg-primary' : 'bg-muted')}></div>
+                    <div 
+                      key={s} 
+                      className={cn(
+                        "h-1.5 w-12 rounded-full transition-all duration-300", 
+                        step >= s ? 'bg-gradient-to-r from-primary to-secondary shadow-md' : 'bg-border/30'
+                      )}
+                    />
                   ))}
                 </div>
               </div>
             </header>
 
             {/* MAIN */}
-            <main className="flex-1 overflow-y-auto px-4 py-6 md:px-6">
+            <main className="flex-1 overflow-y-auto px-4 py-8 md:px-8 bg-white/50 dark:bg-slate-900/50">
               {/* STEP 1 */}
               {step === 1 && (
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                   <div>
-                    <h3 className="mb-3 font-medium text-foreground">Select Date</h3>
+                    <h3 className="mb-4 font-headline font-semibold text-foreground">Select Date</h3>
                     <Input
                       type="date"
-                      className="w-full"
+                      className="w-full border-2 border-border/40 focus:border-primary rounded-lg h-11"
                       onChange={(e) => setSelectedDate(e.target.value)}
                       min={new Date().toISOString().split("T")[0]}
                     />

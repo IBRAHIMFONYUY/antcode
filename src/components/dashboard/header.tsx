@@ -30,7 +30,7 @@ export function DashboardHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border/50 bg-gradient-to-r from-white to-blue-50 dark:from-slate-950 dark:to-slate-900 px-4 sm:px-6 shadow-sm">
       <SidebarTrigger className="md:hidden" />
       <div className="flex-1">
         <div className="relative">
@@ -38,16 +38,16 @@ export function DashboardHeader() {
           <Input
               type="search"
               placeholder="Search..."
-              className="w-full rounded-lg bg-secondary pl-8 md:w-[200px] lg:w-[336px]"
+              className="w-full rounded-lg bg-white dark:bg-slate-800 border-border pl-8 md:w-[200px] lg:w-[336px] focus:ring-primary"
             />
         </div>
       </div>
       <div className="flex items-center gap-2">
-         <Button variant="ghost" size="icon" className="rounded-full h-9 w-9">
+         <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 hover:bg-primary/10 hover:text-primary">
             <MessageSquare className="h-5 w-5" />
             <span className="sr-only">Messages</span>
         </Button>
-        <Button variant="ghost" size="icon" className="rounded-full h-9 w-9">
+        <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 hover:bg-primary/10 hover:text-primary">
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notifications</span>
         </Button>

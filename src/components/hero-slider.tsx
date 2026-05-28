@@ -48,11 +48,11 @@ export function HeroSlider() {
                 currentSlide === index ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               )}
             >
-              <div className={cn('mb-6', 'animate-float')}>
+              <div className={cn('mb-8', 'animate-float')}>
                 <div className="relative">
-                  <div className={cn('absolute', 'inset-0', 'bg-primary/20', 'blur-xl', 'rounded-full')} />
-                  <div className={cn('relative', 'bg-gradient-to-br', 'from-primary', 'to-primary/80', 'p-4', 'rounded-2xl', 'shadow-2xl')}>
-                    <Icon className={cn('h-8', 'w-8', 'text-primary-foreground')} />
+                  <div className={cn('absolute', 'inset-0', 'bg-gradient-to-br', 'from-primary/30', 'to-secondary/20', 'blur-2xl', 'rounded-full')} />
+                  <div className={cn('relative', 'bg-gradient-to-br', 'from-primary', 'via-primary', 'to-secondary', 'p-5', 'rounded-3xl', 'shadow-2xl', 'backdrop-blur-sm')}>
+                    <Icon className={cn('h-8', 'w-8', 'text-white')} />
                   </div>
                 </div>
               </div>
@@ -71,7 +71,7 @@ export function HeroSlider() {
         <Button 
           size="lg" 
           asChild
-          className={cn('group', 'relative', 'overflow-hidden', 'bg-gradient-to-r', 'from-primary', 'to-primary/80', 'hover:from-primary/90', 'hover:to-primary/70', 'transition-all', 'duration-300', 'shadow-lg', 'hover:shadow-xl', 'hover:scale-105')}
+          className={cn('group', 'relative', 'overflow-hidden', 'bg-gradient-to-r', 'from-primary', 'to-secondary', 'hover:from-primary/90', 'hover:to-secondary/90', 'transition-all', 'duration-300', 'shadow-xl', 'hover:shadow-2xl', 'hover:scale-105', 'text-white', 'font-semibold', 'border-0')}
         >
           <Link href="/signup">
             <span className={cn('relative', 'z-10')}>Get Started</span>
@@ -82,7 +82,7 @@ export function HeroSlider() {
           size="lg" 
           variant="outline" 
           asChild
-          className={cn('group', 'border-2', 'hover:border-primary/50', 'transition-all', 'duration-300', 'hover:scale-105')}
+          className={cn('group', 'border-2', 'border-primary', 'text-primary', 'hover:bg-primary/5', 'hover:border-secondary', 'transition-all', 'duration-300', 'hover:scale-105', 'font-semibold')}
         >
           <Link href="/experts" className="group">
             Find an Expert <ArrowRight className={cn('ml-2', 'h-4', 'w-4', 'transition-transform', 'group-hover:translate-x-1')} />
