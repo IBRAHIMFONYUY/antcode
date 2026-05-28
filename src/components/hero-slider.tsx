@@ -3,17 +3,24 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles, Zap, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const heroSlides = [
   {
     title: 'Learn, Build, and Grow with Industry Experts',
     description: 'Combine 1-on-1 mentorship with structured learning paths to accelerate your career in tech. Get guidance from the best in the industry.',
+    icon: Sparkles,
   },
   {
     title: 'Unlock Your Potential with Personalized Mentorship',
     description: 'Connect with top mentors, follow guided learning paths, and achieve your professional goals faster than ever before.',
+    icon: Zap,
+  },
+  {
+    title: 'Accelerate Your Tech Career Today',
+    description: 'Join thousands of successful developers who transformed their careers through our expert-led programs and hands-on projects.',
+    icon: TrendingUp,
   },
 ];
 
@@ -23,43 +30,77 @@ export function HeroSlider() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 7000); // Change slide every 5 seconds
+    }, 6000);
 
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div>
-      <div className="relative" style={{ minHeight: '220px' }}>
-        {heroSlides.map((slide, index) => (
-          <div
-            key={index}
-            className={cn(
-              'absolute inset-0 flex flex-col items-center justify-center transition-all duration-1000 ease-in-out',
-              currentSlide === index ? 'opacity-100 animate-fade-in-down' : 'opacity-0'
-            )}
-          >
-            <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              {slide.title}
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              {slide.description}
-            </p>
-          </div>
-        ))}
+    <div className={cn('relative', 'z-10')}>
+      <div className="relative" style={{ minHeight: '280px' }}>
+        {heroSlides.map((slide, index) => {
+          const Icon = slide.icon;
+          return (
+            <div
+              key={index}
+              className={cn(
+                'absolute inset-0 flex flex-col items-center justify-center transition-all duration-1000 ease-in-out',
+                currentSlide === index ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+              )}
+            >
+              <div className={cn('mb-6', 'animate-float')}>
+                <div className="relative">
+                  <div className={cn('absolute', 'inset-0', 'bg-primary/20', 'blur-xl', 'rounded-full')} />
+                  <div className={cn('relative', 'bg-gradient-to-br', 'from-primary', 'to-primary/80', 'p-4', 'rounded-2xl', 'shadow-2xl')}>
+                    <Icon className={cn('h-8', 'w-8', 'text-primary-foreground')} />
+                  </div>
+                </div>
+              </div>
+              <h1 className={cn('font-headline', 'text-4xl', 'font-bold', 'tracking-tight', 'sm:text-5xl', 'md:text-6xl', 'lg:text-7xl', 'bg-gradient-to-r', 'from-foreground', 'via-primary', 'to-foreground', 'bg-clip-text', 'text-transparent', 'animate-gradient-x')}>
+                {slide.title}
+              </h1>
+              <p className={cn('mx-auto', 'mt-6', 'max-w-2xl', 'text-lg', 'text-muted-foreground', 'leading-relaxed')}>
+                {slide.description}
+              </p>
+            </div>
+          );
+        })}
       </div>
-      
-     
 
-      <div className="relative z-10 mt-28 flex justify-center gap-4">
-        <Button size="lg" asChild>
-          <Link href="/signup">Get Started</Link>
-        </Button>
-        <Button size="lg" variant="outline" asChild>
-          <Link href="/experts" className="group">
-            Find an Expert <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+      <div className={cn('relative', 'z-10', 'mt-12', 'flex', 'flex-col', 'sm:flex-row', 'justify-center', 'gap-4')}>
+        <Button 
+          size="lg" 
+          asChild
+          className={cn('group', 'relative', 'overflow-hidden', 'bg-gradient-to-r', 'from-primary', 'to-primary/80', 'hover:from-primary/90', 'hover:to-primary/70', 'transition-all', 'duration-300', 'shadow-lg', 'hover:shadow-xl', 'hover:scale-105')}
+        >
+          <Link href="/signup">
+            <span className={cn('relative', 'z-10')}>Get Started</span>
+            <div className={cn('absolute', 'inset-0', 'bg-white/20', 'translate-y-full', 'group-hover:translate-y-0', 'transition-transform', 'duration-300')} />
           </Link>
         </Button>
+        <Button 
+          size="lg" 
+          variant="outline" 
+          asChild
+          className={cn('group', 'border-2', 'hover:border-primary/50', 'transition-all', 'duration-300', 'hover:scale-105')}
+        >
+          <Link href="/experts" className="group">
+            Find an Expert <ArrowRight className={cn('ml-2', 'h-4', 'w-4', 'transition-transform', 'group-hover:translate-x-1')} />
+          </Link>
+        </Button>
+      </div>
+
+      <div className={cn('mt-16', 'flex', 'justify-center', 'gap-8')}>
+        {heroSlides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={cn(
+              'h-2 rounded-full transition-all duration-300',
+              currentSlide === index ? 'w-8 bg-primary' : 'w-2 bg-primary/30 hover:bg-primary/50'
+            )}
+          />
+        ))}
       </div>
     </div>
   );
