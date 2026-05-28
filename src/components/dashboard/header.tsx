@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -9,11 +10,17 @@ import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Input } from '../ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function DashboardHeader() {
   const { user } = useUser();
   const auth = useAuth();
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     if (auth) {
@@ -44,30 +51,35 @@ export function DashboardHeader() {
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notifications</span>
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={user?.photoURL ?? "https://picsum.photos/seed/user/100/100"} alt="User avatar" />
-                <AvatarFallback>{user?.displayName?.charAt(0)?.toUpperCase() ?? 'U'}</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user?.displayName ?? 'My Account'}</p>
-                <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>Profile</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        
+        {!isMounted ? (
+          <Skeleton className="h-10 w-10 rounded-full" />
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={user?.photoURL ?? "https://picsum.photos/seed/user/100/100"} alt="User avatar" />
+                  <AvatarFallback>{user?.displayName?.charAt(0)?.toUpperCase() ?? 'U'}</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{user?.displayName ?? 'My Account'}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>Profile</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </header>
   );

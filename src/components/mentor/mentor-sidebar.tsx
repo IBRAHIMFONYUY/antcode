@@ -25,6 +25,7 @@ import {
   Award,
   CheckCircle,
   MessageCircle,
+  Shield,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { useAuth } from '@/firebase';
@@ -32,6 +33,7 @@ import { signOut } from 'firebase/auth';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNotifications } from '@/hooks/use-notifications';
+import { useMentor } from '@/hooks/use-mentor';
 
 const mentorNavItems = [
   { href: '/dashboard/mentor', icon: LayoutDashboard, title: 'Dashboard' },
@@ -44,6 +46,8 @@ const mentorNavItems = [
   { href: '/dashboard/mentor/earnings', icon: BarChart3, title: 'Earnings' },
 ];
 
+const adminNavItem = { href: '/dashboard/admin', icon: Shield, title: 'Admin' };
+
 const bottomNavItems = [
   { href: '/dashboard/mentor/settings', icon: Settings, title: 'Settings' },
 ];
@@ -53,6 +57,7 @@ export function MentorDashboardSidebar() {
   const router = useRouter();
   const { state, toggleSidebar } = useSidebar();
   const isMobile = useIsMobile();
+  const { isAdmin } = useMentor();
 
   const { unansweredQuestionsCount, pendingSubmissionsCount } = useNotifications();
 
@@ -66,6 +71,11 @@ export function MentorDashboardSidebar() {
       console.error('Logout error:', error);
     }
   };
+
+  const allNavItems = [...mentorNavItems];
+  if (isAdmin) {
+    allNavItems.push(adminNavItem);
+  }
 
   return (
     <Sidebar>
@@ -82,7 +92,7 @@ export function MentorDashboardSidebar() {
 
       <SidebarContent>
         <SidebarMenu>
-          {mentorNavItems.map((item) => (
+          {allNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild

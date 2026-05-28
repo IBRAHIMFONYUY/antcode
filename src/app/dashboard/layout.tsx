@@ -8,13 +8,13 @@ import { DashboardHeader } from '@/components/dashboard/header';
 import { useMentor } from '@/hooks/use-mentor';
 
 function DashboardLayoutContent({ children }: { children: ReactNode }) {
-  const { isMentor } = useMentor();
+  const { isMentor, isAdmin } = useMentor();
 
   return (
     <div className="dark bg-background text-foreground min-h-screen">
       <SidebarProvider>
         <div className="flex h-screen">
-          {isMentor ? <MentorDashboardSidebar /> : <DashboardSidebar />}
+          {isMentor || isAdmin ? <MentorDashboardSidebar /> : <DashboardSidebar />}
           <div className="flex flex-1 flex-col overflow-hidden">
             <DashboardHeader />
             <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">

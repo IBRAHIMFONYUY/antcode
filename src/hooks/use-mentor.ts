@@ -8,6 +8,7 @@ export function useMentor() {
 
   const isMentor = profile?.role === 'mentor';
   const isStudent = profile?.role === 'student';
+  const isAdmin = profile?.role === 'admin';
 
   const mentorData = isMentor
     ? {
@@ -27,6 +28,7 @@ export function useMentor() {
     loading,
     isMentor,
     isStudent,
+    isAdmin,
     mentorData,
   };
 }
